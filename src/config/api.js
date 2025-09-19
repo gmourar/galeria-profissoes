@@ -5,7 +5,8 @@ export const API_CONFIG = {
   
   // Endpoints
   ENDPOINTS: {
-    UPLOAD_PHOTO: '/photos/upload'
+    UPLOAD_PHOTO: '/photos/upload',
+    GENERATE_PHOTOS: '/generate'
   }
 };
 

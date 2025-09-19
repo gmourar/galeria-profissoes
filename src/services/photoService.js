@@ -98,3 +98,54 @@ export const simulateUpload = (base64Photo, onProgress, onSuccess, onError) => {
     }
   }, 200);
 };
+
+/**
+ * Gera fotos usando IA baseado no prompt fornecido
+ * @param {string} prompt - Prompt para geração da foto
+ * @returns {Promise<Array>} - Array com as fotos geradas
+ */
+export const generatePhotos = async (prompt) => {
+  try {
+    // URL da API de geração
+    const generateUrl = getApiUrl(API_CONFIG.ENDPOINTS.GENERATE_PHOTOS);
+    
+    const response = await fetch(generateUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        prompt: prompt
+      })
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Erro na geração: ${response.status} ${response.statusText}`);
+    }
+    
+    const result = await response.json();
+    return result.photos || [];
+    
+  } catch (error) {
+    console.error('Erro ao gerar fotos:', error);
+    // Em caso de erro, retorna fotos simuladas para desenvolvimento
+    return simulateGeneratedPhotos();
+  }
+};
+
+/**
+ * Simula fotos geradas para desenvolvimento
+ * @returns {Array} - Array com fotos simuladas
+ */
+export const simulateGeneratedPhotos = () => {
+  const mockPhotos = [];
+  for (let i = 1; i <= 4; i++) {
+    mockPhotos.push({
+      id: `generated_${Date.now()}_${i}`,
+      url: `data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k=`,
+      style: 'professional',
+      generatedAt: new Date().toISOString()
+    });
+  }
+  return mockPhotos;
+};

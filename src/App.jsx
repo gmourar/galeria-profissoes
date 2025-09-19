@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import CameraScreen from './pages/CameraScreen';
 import GenderSelectionScreen from './pages/GenderSelectionScreen';
 import StyleSelectionScreen from './pages/StyleSelectionScreen';
+import PhotoSelectionScreen from './pages/PhotoSelectionScreen';
 import './App.css';
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
           <Route path="/camera" element={<CameraScreen />} />
           <Route path="/gender-selection" element={<GenderSelectionScreen />} />
           <Route path="/style-selection" element={<StyleSelectionScreen />} />
+          <Route path="/photo-selection" element={<PhotoSelectionScreen />} />
         </Routes>
       </div>
     </Router>
