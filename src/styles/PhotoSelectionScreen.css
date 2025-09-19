@@ -1,6 +1,6 @@
 .photo-selection-screen {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #000000;
   padding: 20px;
   display: flex;
   align-items: center;
@@ -10,10 +10,11 @@
 .photo-container {
   max-width: 1200px;
   width: 100%;
-  background: white;
+  background: #ffffff;
   border-radius: 20px;
   padding: 30px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 20px 40px rgba(255, 255, 255, 0.08);
+  border: 3px solid #000000;
 }
 
 .header {
@@ -22,14 +23,14 @@
 }
 
 .header h2 {
-  color: #333;
+  color: #000000;
   font-size: 2.5rem;
   margin-bottom: 10px;
   font-weight: 700;
 }
 
 .header p {
-  color: #666;
+  color: #333333;
   font-size: 1.2rem;
   margin-bottom: 20px;
 }
@@ -41,8 +42,8 @@
 }
 
 .selected-count {
-  background: #667eea;
-  color: white;
+  background: #000000;
+  color: #ffffff;
   padding: 8px 16px;
   border-radius: 20px;
   font-weight: 600;
@@ -71,9 +72,9 @@
 }
 
 .photo-item.selected {
-  border-color: #667eea;
+  border-color: #000000;
   transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
 }
 
 .photo-wrapper {
@@ -88,6 +89,7 @@
   height: 100%;
   object-fit: cover;
   transition: transform 0.3s ease;
+  filter: grayscale(100%);
 }
 
 .photo-item:hover .photo-wrapper img {
@@ -117,7 +119,7 @@
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -128,8 +130,8 @@
 }
 
 .photo-item.selected .selection-indicator {
-  background: #667eea;
-  color: white;
+  background: #000000;
+  color: #ffffff;
 }
 
 .action-buttons {
@@ -141,9 +143,9 @@
 }
 
 .download-button {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
+  background: #000000;
+  color: #ffffff;
+  border: 3px solid #000000;
   padding: 15px 30px;
   border-radius: 25px;
   font-size: 1.1rem;
@@ -155,7 +157,7 @@
 
 .download-button:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.35);
 }
 
 .download-button:disabled {
@@ -167,8 +169,8 @@
 
 .start-over-button {
   background: transparent;
-  color: #667eea;
-  border: 2px solid #667eea;
+  color: #000000;
+  border: 3px solid #000000;
   padding: 15px 30px;
   border-radius: 25px;
   font-size: 1.1rem;
@@ -179,28 +181,28 @@
 }
 
 .start-over-button:hover {
-  background: #667eea;
-  color: white;
+  background: #000000;
+  color: #ffffff;
   transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.35);
 }
 
 .style-info {
   text-align: center;
   padding: 20px;
-  background: #f8f9fa;
+  background: #f2f2f2;
   border-radius: 15px;
-  border-left: 4px solid #667eea;
+  border-left: 4px solid #000000;
 }
 
 .style-info p {
   margin: 5px 0;
-  color: #666;
+  color: #333333;
   font-size: 1rem;
 }
 
 .style-info strong {
-  color: #333;
+  color: #000000;
   font-weight: 600;
 }
 

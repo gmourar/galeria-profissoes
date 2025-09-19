@@ -29,10 +29,24 @@ export const base64ToBlob = (base64String, mimeType = 'image/jpeg') => {
  * @param {Function} onSuccess - Callback para sucesso
  * @param {Function} onError - Callback para erro
  */
-export const uploadPhoto = async (base64Photo, onProgress, onSuccess, onError) => {
+/**
+ * Faz upload de uma foto para o servidor. Aceita base64 ou Blob/File
+ * @param {string|Blob|File} photoInput - Imagem em base64 ou Blob/File
+ * @param {Function} onProgress
+ * @param {Function} onSuccess
+ * @param {Function} onError
+ */
+export const uploadPhoto = async (photoInput, onProgress, onSuccess, onError) => {
   try {
-    // Converte base64 para Blob
-    const blob = base64ToBlob(base64Photo);
+    // Normaliza para Blob
+    let blob;
+    if (typeof photoInput === 'string') {
+      blob = base64ToBlob(photoInput);
+    } else if (photoInput instanceof Blob) {
+      blob = photoInput;
+    } else {
+      throw new Error('Formato de imagem não suportado para upload');
+    }
     
     // Cria FormData
     const formData = new FormData();
@@ -43,8 +57,8 @@ export const uploadPhoto = async (base64Photo, onProgress, onSuccess, onError) =
     
     // Decide entre mock e API real
     if (API_CONFIG.USE_MOCKS) {
-      // Mantém o comportamento simulado existente
-      return simulateUpload(base64Photo, onProgress, onSuccess, onError);
+      // Mantém o comportamento simulado existente, suportando Blob ou base64
+      return simulateUpload(photoInput, onProgress, onSuccess, onError);
     }
     
     // Configuração do fetch
@@ -78,7 +92,7 @@ export const uploadPhoto = async (base64Photo, onProgress, onSuccess, onError) =
  * @param {Function} onSuccess - Callback para sucesso
  * @param {Function} onError - Callback para erro
  */
-export const simulateUpload = (base64Photo, onProgress, onSuccess, onError) => {
+export const simulateUpload = (photoInput, onProgress, onSuccess, onError) => {
   // Simula progresso do upload
   let progress = 0;
   const interval = setInterval(() => {
@@ -90,12 +104,20 @@ export const simulateUpload = (base64Photo, onProgress, onSuccess, onError) => {
     if (progress >= 100) {
       clearInterval(interval);
       
+      // Gera URL de visualização
+      let previewUrl;
+      if (typeof photoInput === 'string') {
+        previewUrl = photoInput; // data URL
+      } else if (photoInput instanceof Blob) {
+        previewUrl = URL.createObjectURL(photoInput);
+      }
+
       // Simula resposta de sucesso
       const mockResponse = {
         success: true,
         message: 'Foto enviada com sucesso',
         photoId: `photo_${Date.now()}`,
-        url: base64Photo // Em produção seria a URL da imagem no servidor
+        url: previewUrl // Em produção seria a URL da imagem no servidor
       };
       
       if (onSuccess) {
