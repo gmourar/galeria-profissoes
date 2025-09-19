@@ -62,7 +62,7 @@ const StyleSelectionScreen = () => {
         });
       }, 500);
 
-      // Gera as fotos (simulação)
+      // Envia prompt para o backend gerar as fotos
       const generatedPhotos = await generatePhotos(prompt);
       
       clearInterval(progressInterval);

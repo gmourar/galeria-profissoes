@@ -41,10 +41,16 @@ export const uploadPhoto = async (base64Photo, onProgress, onSuccess, onError) =
     // URL completa do endpoint
     const uploadUrl = getApiUrl(API_CONFIG.ENDPOINTS.UPLOAD_PHOTO);
     
-    // Configuração do fetch com progresso
+    // Decide entre mock e API real
+    if (API_CONFIG.USE_MOCKS) {
+      // Mantém o comportamento simulado existente
+      return simulateUpload(base64Photo, onProgress, onSuccess, onError);
+    }
+    
+    // Configuração do fetch
     const response = await fetch(uploadUrl, {
       method: 'POST',
-      body: formData,
+      body: formData
     });
     
     if (!response.ok) {
@@ -106,25 +112,30 @@ export const simulateUpload = (base64Photo, onProgress, onSuccess, onError) => {
  */
 export const generatePhotos = async (prompt) => {
   try {
+    // Se estiver com mocks ligados, retorna simulado direto
+    if (API_CONFIG.USE_MOCKS) {
+      return simulateGeneratedPhotos();
+    }
+
     // URL da API de geração
     const generateUrl = getApiUrl(API_CONFIG.ENDPOINTS.GENERATE_PHOTOS);
-    
+
     const response = await fetch(generateUrl, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        prompt: prompt
-      })
+      body: JSON.stringify({ prompt })
     });
-    
+
     if (!response.ok) {
       throw new Error(`Erro na geração: ${response.status} ${response.statusText}`);
     }
-    
+
     const result = await response.json();
-    return result.photos || [];
+    // Backends podem responder com { photos: [...] } ou outra chave; padroniza
+    if (Array.isArray(result)) return result;
+    return result.photos || result.data || [];
     
   } catch (error) {
     console.error('Erro ao gerar fotos:', error);
