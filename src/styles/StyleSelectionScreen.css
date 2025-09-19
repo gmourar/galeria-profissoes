@@ -1,0 +1,143 @@
+.style-selection-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #000000;
+  padding: 2vh;
+  font-family: 'Arial', sans-serif;
+  color: #ffffff;
+}
+
+.style-container {
+  background: #ffffff;
+  border-radius: 30px;
+  padding: 4vh;
+  box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
+  text-align: center;
+  max-width: 80vh;
+  width: 100%;
+  border: 3px solid #000000;
+}
+
+.style-container h2 {
+  color: #000000;
+  margin-bottom: 4vh;
+  font-size: 3vh;
+  font-weight: bold;
+}
+
+.styles-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2vh;
+  margin-bottom: 4vh;
+}
+
+.style-button {
+  background: #ffffff;
+  border: 3px solid #000000;
+  border-radius: 20px;
+  padding: 2vh;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #000000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1vh;
+  min-height: 12vh;
+  justify-content: center;
+}
+
+.style-button:hover {
+  background: #f0f0f0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.style-button.selected {
+  background: #000000;
+  color: #ffffff;
+  border-color: #000000;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.style-icon {
+  font-size: 2vh;
+  font-weight: bold;
+}
+
+.style-name {
+  font-size: 1.5vh;
+  font-weight: bold;
+  text-align: center;
+}
+
+.confirm-button {
+  background: #000000;
+  color: #ffffff;
+  border: 3px solid #000000;
+  border-radius: 30px;
+  padding: 2vh 5vh;
+  font-size: 2.5vh;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  min-width: 25vh;
+}
+
+.confirm-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  background: #333333;
+}
+
+.confirm-button:disabled {
+  background: #666666;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Otimizado para TV vertical */
+@media (orientation: portrait) {
+  .style-container {
+    padding: 3vh;
+    max-width: 90vh;
+  }
+  
+  .style-container h2 {
+    font-size: 2.5vh;
+  }
+  
+  .styles-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5vh;
+  }
+  
+  .style-button {
+    min-height: 10vh;
+    padding: 1.5vh;
+  }
+  
+  .style-icon {
+    font-size: 1.5vh;
+  }
+  
+  .style-name {
+    font-size: 1.2vh;
+  }
+  
+  .confirm-button {
+    font-size: 2vh;
+    padding: 1.5vh 4vh;
+  }
+}
+
+@media (max-width: 480px) {
+  .styles-grid {
+    grid-template-columns: 1fr;
+  }
+}

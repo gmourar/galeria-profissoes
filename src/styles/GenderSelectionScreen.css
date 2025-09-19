@@ -1,0 +1,117 @@
+.gender-selection-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #000000;
+  padding: 2vh;
+  font-family: 'Arial', sans-serif;
+  color: #ffffff;
+}
+
+.gender-container {
+  background: #ffffff;
+  border-radius: 30px;
+  padding: 6vh;
+  box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
+  text-align: center;
+  max-width: 60vh;
+  width: 100%;
+  border: 3px solid #000000;
+}
+
+.gender-container h2 {
+  color: #000000;
+  margin-bottom: 4vh;
+  font-size: 4vh;
+  font-weight: bold;
+}
+
+.gender-options {
+  display: flex;
+  gap: 3vh;
+  justify-content: center;
+  margin-bottom: 4vh;
+}
+
+.gender-button {
+  background: #ffffff;
+  border: 3px solid #000000;
+  border-radius: 20px;
+  padding: 3vh 5vh;
+  font-size: 2.5vh;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #000000;
+  min-width: 20vh;
+}
+
+.gender-button:hover {
+  background: #f0f0f0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.gender-button.selected {
+  background: #000000;
+  color: #ffffff;
+  border-color: #000000;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.continue-button {
+  background: #000000;
+  color: #ffffff;
+  border: 3px solid #000000;
+  border-radius: 30px;
+  padding: 2vh 5vh;
+  font-size: 2.5vh;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  min-width: 25vh;
+}
+
+.continue-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  background: #333333;
+}
+
+.continue-button:disabled {
+  background: #666666;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Otimizado para TV vertical */
+@media (orientation: portrait) {
+  .gender-container {
+    padding: 4vh;
+    max-width: 70vh;
+  }
+  
+  .gender-container h2 {
+    font-size: 3vh;
+  }
+  
+  .gender-options {
+    flex-direction: column;
+    gap: 2vh;
+  }
+  
+  .gender-button {
+    min-width: auto;
+    width: 100%;
+    font-size: 2vh;
+    padding: 2vh 3vh;
+  }
+  
+  .continue-button {
+    font-size: 2vh;
+    padding: 1.5vh 4vh;
+  }
+}
