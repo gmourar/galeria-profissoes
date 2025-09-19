@@ -12,6 +12,8 @@ const GenderSelectionScreen = () => {
 
   const handleContinue = () => {
     if (selectedGender) {
+      // Salva o gênero selecionado no localStorage
+      localStorage.setItem('selectedGender', selectedGender);
       navigate('/style-selection');
     }
   };
