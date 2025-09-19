@@ -1,11 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { uploadPhoto, simulateUpload } from '../services/photoService';
 import '../styles/CameraScreen.css';
 
 const CameraScreen = () => {
   const [isCapturing, setIsCapturing] = useState(false);
   const [countdown, setCountdown] = useState(null);
   const [photo, setPhoto] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const navigate = useNavigate();
@@ -42,7 +45,33 @@ const CameraScreen = () => {
   };
 
   const handleContinue = () => {
-    navigate('/gender-selection');
+    if (!photo) return;
+    
+    setIsUploading(true);
+    setUploadProgress(0);
+    
+    // Para desenvolvimento, usa simulação
+    // Em produção, trocar por: uploadPhoto(photo, ...)
+    simulateUpload(
+      photo,
+      (progress) => {
+        setUploadProgress(progress);
+      },
+      (result) => {
+        console.log('Upload realizado com sucesso:', result);
+        setIsUploading(false);
+        setUploadProgress(0);
+        // Salva dados da foto no localStorage para usar nas próximas telas
+        localStorage.setItem('uploadedPhoto', JSON.stringify(result));
+        navigate('/gender-selection');
+      },
+      (error) => {
+        console.error('Erro no upload:', error);
+        setIsUploading(false);
+        setUploadProgress(0);
+        alert('Erro ao enviar foto. Tente novamente.');
+      }
+    );
   };
 
   const handleRetake = () => {
@@ -60,7 +89,7 @@ const CameraScreen = () => {
           ) : (
             <div className="video-placeholder">
               <div className="camera-icon">CAMERA</div>
-              <p>Preview da Câmera DSLR</p>
+              <p>Preview da câmera</p>
             </div>
           )}
         </div>
@@ -69,14 +98,35 @@ const CameraScreen = () => {
       {photo ? (
         <div className="photo-modal">
           <div className="modal-content">
+            <div className="modal-photo-preview">
+              <img src={photo} alt="Foto capturada" className="modal-photo" />
+            </div>
             <div className="modal-buttons">
-              <button className="retake-button" onClick={handleRetake}>
+              <button 
+                className="retake-button" 
+                onClick={handleRetake}
+                disabled={isUploading}
+              >
                 Tirar novamente
               </button>
-              <button className="continue-button" onClick={handleContinue}>
-                Continuar
+              <button 
+                className="continue-button" 
+                onClick={handleContinue}
+                disabled={isUploading}
+              >
+                {isUploading ? `Enviando... ${uploadProgress}%` : 'Continuar'}
               </button>
             </div>
+            {isUploading && (
+              <div className="upload-progress">
+                <div className="progress-bar">
+                  <div 
+                    className="progress-fill" 
+                    style={{ width: `${uploadProgress}%` }}
+                  ></div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       ) : (
