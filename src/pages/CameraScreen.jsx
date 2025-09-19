@@ -1,12 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { uploadPhoto, simulateUpload } from '../services/photoService';
+import { uploadPhoto } from '../services/photoService';
 import '../styles/CameraScreen.css';
 
 const CameraScreen = () => {
   const [isCapturing, setIsCapturing] = useState(false);
   const [countdown, setCountdown] = useState(null);
   const [photo, setPhoto] = useState(null);
+  const [capturedBlob, setCapturedBlob] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const videoRef = useRef(null);
@@ -14,14 +15,31 @@ const CameraScreen = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Simular acesso à câmera DSLR conectada
-    // Em produção, aqui seria a integração real com a câmera
-    const video = videoRef.current;
-    if (video) {
-      // Simular stream de vídeo (placeholder)
-      video.style.backgroundColor = '#f0f0f0';
-      video.style.border = '2px solid #333';
-    }
+    let activeStream;
+    const startCamera = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'user' },
+          audio: false
+        });
+        activeStream = stream;
+        const video = videoRef.current;
+        if (video) {
+          video.srcObject = stream;
+          await video.play();
+        }
+      } catch (err) {
+        console.error('Erro ao acessar a câmera:', err);
+        alert('Não foi possível acessar a câmera. Verifique as permissões do navegador.');
+      }
+    };
+    startCamera();
+
+    return () => {
+      if (activeStream) {
+        activeStream.getTracks().forEach((t) => t.stop());
+      }
+    };
   }, []);
 
   const handleCapture = () => {
@@ -34,26 +52,54 @@ const CameraScreen = () => {
       setCountdown(counter);
       if (counter === 0) {
         clearInterval(interval);
-        
-        // Simular captura da foto
-        const mockPhoto = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k=';
-        setPhoto(mockPhoto);
-        setIsCapturing(false);
-        setCountdown(null);
+        // Captura frame do vídeo no canvas
+        const video = videoRef.current;
+        const canvas = canvasRef.current;
+        if (!video || !canvas) {
+          setIsCapturing(false);
+          setCountdown(null);
+          return;
+        }
+        const width = video.videoWidth || 1080;
+        const height = video.videoHeight || 1920;
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, width, height);
+
+        // Converte para Blob (upload) e DataURL (preview)
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              setCapturedBlob(blob);
+              const reader = new FileReader();
+              reader.onloadend = () => {
+                setPhoto(reader.result);
+                setIsCapturing(false);
+                setCountdown(null);
+              };
+              reader.readAsDataURL(blob);
+            } else {
+              setIsCapturing(false);
+              setCountdown(null);
+              alert('Falha ao capturar a foto.');
+            }
+          },
+          'image/jpeg',
+          0.92
+        );
       }
     }, 1000);
   };
 
   const handleContinue = () => {
-    if (!photo) return;
+    if (!capturedBlob) return;
     
     setIsUploading(true);
     setUploadProgress(0);
     
-    // Para desenvolvimento, usa simulação
-    // Em produção, trocar por: uploadPhoto(photo, ...)
-    simulateUpload(
-      photo,
+    uploadPhoto(
+      capturedBlob,
       (progress) => {
         setUploadProgress(progress);
       },
@@ -61,7 +107,6 @@ const CameraScreen = () => {
         console.log('Upload realizado com sucesso:', result);
         setIsUploading(false);
         setUploadProgress(0);
-        // Salva dados da foto no localStorage para usar nas próximas telas
         localStorage.setItem('uploadedPhoto', JSON.stringify(result));
         navigate('/gender-selection');
       },
@@ -76,6 +121,7 @@ const CameraScreen = () => {
 
   const handleRetake = () => {
     setPhoto(null);
+    setCapturedBlob(null);
     setIsCapturing(false);
     setCountdown(null);
   };
@@ -87,10 +133,7 @@ const CameraScreen = () => {
           {photo ? (
             <img src={photo} alt="Foto capturada" className="captured-photo" />
           ) : (
-            <div className="video-placeholder">
-              <div className="camera-icon">CAMERA</div>
-              <p>Preview da câmera</p>
-            </div>
+            <video ref={videoRef} className="camera-video" autoPlay muted playsInline />
           )}
         </div>
       </div>
@@ -144,7 +187,6 @@ const CameraScreen = () => {
         </div>
       )}
 
-      <video ref={videoRef} style={{ display: 'none' }} />
       <canvas ref={canvasRef} style={{ display: 'none' }} />
     </div>
   );
