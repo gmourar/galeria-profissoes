@@ -7,8 +7,8 @@ const LoadingScreen = () => {
   const [progress, setProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showTimeoutModal, setShowTimeoutModal] = useState(false);
   const [timeoutCount, setTimeoutCount] = useState(0);
+  const [startTime, setStartTime] = useState(Date.now());
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -42,16 +42,37 @@ const LoadingScreen = () => {
           // Reset timeout count se progresso mudou
           if (response.progress > 0) {
             setTimeoutCount(0);
+            setStartTime(Date.now()); // Reset tempo também
           } else {
             // Incrementa contador se progresso está zerado
             const newCount = timeoutCount + 1;
             setTimeoutCount(newCount);
             console.log('Progresso zerado, contador:', newCount);
             
-            // Se progresso zerado por 15 segundos (7.5 verificações de 2s)
-            if (newCount >= 8) {
-              console.log('⚠️ TIMEOUT: Progresso zerado por 15+ segundos');
-              setShowTimeoutModal(true);
+            // Verifica timeout por tentativas (10 tentativas) ou tempo (15 segundos)
+            const currentTime = Date.now();
+            const elapsedTime = (currentTime - startTime) / 1000; // em segundos
+            
+            console.log('Tempo decorrido:', elapsedTime.toFixed(1), 'segundos');
+            console.log('Tentativas com progresso zero:', newCount);
+            
+            if (newCount >= 10 || elapsedTime >= 15) {
+              console.log('⚠️ TIMEOUT DETECTADO:');
+              console.log('- Tentativas:', newCount, '(limite: 10)');
+              console.log('- Tempo:', elapsedTime.toFixed(1), 's (limite: 15s)');
+              
+              // Mostra alerta de erro e volta para câmera
+              alert('Erro: O processamento está demorando muito. Voltando para tirar uma nova foto.');
+              
+              // Limpa dados e volta para câmera
+              localStorage.removeItem('aiTaskId');
+              localStorage.removeItem('generatedImages');
+              localStorage.removeItem('uploadedPhoto');
+              localStorage.removeItem('uploadedPhotoName');
+              localStorage.removeItem('selectedGender');
+              localStorage.removeItem('selectionData');
+              
+              navigate('/camera');
               return;
             }
           }
@@ -102,19 +123,6 @@ const LoadingScreen = () => {
     return '#ffffff'; // Cor branca consistente com outras páginas
   };
 
-  const handleRetryPhoto = () => {
-    // Limpa dados e volta para a câmera
-    localStorage.removeItem('aiTaskId');
-    localStorage.removeItem('generatedImages');
-    localStorage.removeItem('uploadedPhoto');
-    localStorage.removeItem('uploadedPhotoName');
-    navigate('/camera');
-  };
-
-  const handleContinueWaiting = () => {
-    setShowTimeoutModal(false);
-    setTimeoutCount(0); // Reset contador
-  };
 
   if (error) {
     return (
@@ -169,31 +177,6 @@ const LoadingScreen = () => {
         </div>
       </div>
 
-      {/* Modal de Timeout */}
-      {showTimeoutModal && (
-        <div className="timeout-modal-overlay">
-          <div className="timeout-modal">
-            <div className="timeout-modal-content">
-              <h3>Processamento demorado</h3>
-              <p>O processamento está demorando mais que o esperado. Deseja tirar uma nova foto?</p>
-              <div className="timeout-modal-buttons">
-                <button 
-                  className="timeout-button continue"
-                  onClick={handleContinueWaiting}
-                >
-                  Continuar Aguardando
-                </button>
-                <button 
-                  className="timeout-button retry"
-                  onClick={handleRetryPhoto}
-                >
-                  Tirar Nova Foto
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
