@@ -4,6 +4,7 @@ import GenderSelectionScreen from './pages/GenderSelectionScreen';
 import StyleSelectionScreen from './pages/StyleSelectionScreen';
 import LoadingScreen from './pages/LoadingScreen';
 import PhotoSelectionScreen from './pages/PhotoSelectionScreen';
+import PrintScreen from './pages/PrintScreen';
 import './App.css';
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
           <Route path="/style-selection" element={<StyleSelectionScreen />} />
           <Route path="/loading" element={<LoadingScreen />} />
           <Route path="/photo-selection" element={<PhotoSelectionScreen />} />
+          <Route path="/print" element={<PrintScreen />} />
         </Routes>
       </div>
     </Router>

@@ -148,6 +148,9 @@ const StyleSelectionScreen = () => {
 
         {isGenerating ? (
           <div className="generation-progress">
+            <div className="loading-spinner">
+              <div className="spinner"></div>
+            </div>
             <div className="progress-info">
               <h3>Gerando suas fotos profissionais...</h3>
               <p>Isso pode levar alguns minutos</p>

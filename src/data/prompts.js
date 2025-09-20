@@ -39,14 +39,14 @@ export const PROMPTS_DATA = {
 
 // Estilos disponíveis
 export const AVAILABLE_STYLES = [
-  { id: 'AGRO', name: 'Agro' },
-  { id: 'BEAUTY', name: 'Beauty' },
-  { id: 'CRYPTO', name: 'Crypto' },
+  { id: 'AGRO', name: 'Agronegócio' },
+  { id: 'BEAUTY', name: 'Beleza' },
+  { id: 'CRYPTO', name: 'Criptomoedas' },
   { id: 'ENTREPENEUR', name: 'Empreendedor' },
-  { id: 'FASHION', name: 'Fashion' },
-  { id: 'FINANCE', name: 'Finance' },
+  { id: 'FASHION', name: 'Moda' },
+  { id: 'FINANCE', name: 'Finanças' },
   { id: 'TECH', name: 'Tech' },
-  { id: 'REAL_STATE', name: 'Real Estate' }
+  { id: 'REAL_STATE', name: 'Imóveis' }
 ];
 
 /**

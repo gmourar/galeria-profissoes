@@ -10,19 +10,19 @@ const CameraScreen = () => {
   const [capturedBlob, setCapturedBlob] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [useTestPhoto, setUseTestPhoto] = useState(false);
+  const [cameraKey, setCameraKey] = useState(0); // Chave para forçar reinicialização
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     let activeStream;
-    let isInitialized = false;
     
     const startCamera = async () => {
-      if (isInitialized) return;
-      
       try {
+        console.log('Iniciando câmera...', { cameraKey });
+        
+        // Limpa stream anterior se existir
         if (activeStream) {
           activeStream.getTracks().forEach(track => track.stop());
         }
@@ -45,15 +45,15 @@ const CameraScreen = () => {
           // Aguarda o vídeo estar pronto antes de tentar play
           const handleLoadedMetadata = async () => {
             try {
+              console.log('Vídeo carregado, tentando reproduzir...');
               if (video.paused) {
                 await video.play();
+                console.log('Vídeo reproduzindo com sucesso');
               }
-              isInitialized = true;
               video.removeEventListener('loadedmetadata', handleLoadedMetadata);
             } catch (playError) {
               console.warn('Erro ao reproduzir vídeo:', playError);
               // Continua mesmo com erro de play
-              isInitialized = true;
               video.removeEventListener('loadedmetadata', handleLoadedMetadata);
             }
           };
@@ -66,12 +66,62 @@ const CameraScreen = () => {
       }
     };
     
-    startCamera();
+    // Aguarda um pouco antes de iniciar a câmera para garantir que o DOM esteja pronto
+    const timer = setTimeout(startCamera, 100);
 
     return () => {
+      clearTimeout(timer);
       if (activeStream) {
         activeStream.getTracks().forEach((t) => t.stop());
       }
+    };
+  }, [cameraKey]); // Dependência na chave da câmera
+
+  // Detecta quando o usuário volta para a tela e reinicializa a câmera se necessário
+  useEffect(() => {
+    const checkAndRestartCamera = () => {
+      const video = videoRef.current;
+      if (video) {
+        // Verifica se o vídeo não tem stream ou se está pausado
+        const hasNoStream = !video.srcObject;
+        const isPaused = video.paused;
+        const isEnded = video.ended;
+        
+        console.log('Verificando câmera:', {
+          hasNoStream,
+          isPaused,
+          isEnded,
+          videoReadyState: video.readyState
+        });
+        
+        if (hasNoStream || (isPaused && !isEnded)) {
+          console.log('Reinicializando câmera...');
+          setCameraKey(prev => prev + 1);
+        }
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        // Aguarda um pouco para o componente estar pronto
+        setTimeout(checkAndRestartCamera, 100);
+      }
+    };
+
+    const handleFocus = () => {
+      // Aguarda um pouco para o componente estar pronto
+      setTimeout(checkAndRestartCamera, 100);
+    };
+
+    // Verifica imediatamente quando o componente monta
+    setTimeout(checkAndRestartCamera, 500);
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleFocus);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleFocus);
     };
   }, []);
 
@@ -165,37 +215,10 @@ const CameraScreen = () => {
   };
 
   const handleRetake = () => {
-    setPhoto(null);
-    setCapturedBlob(null);
-    setIsCapturing(false);
-    setCountdown(null);
-    setUseTestPhoto(false);
+    // Força o recarregamento da página para reinicializar a câmera
+    window.location.reload();
   };
 
-  const handleUseTestPhoto = async () => {
-    try {
-      console.log('Usando foto de teste...');
-      setUseTestPhoto(true);
-      
-      // Carrega a foto de teste
-      const testPhotoUrl = '/src/assets/ramirex.jpg';
-      const response = await fetch(testPhotoUrl);
-      const blob = await response.blob();
-      
-      // Converte para data URL para preview
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPhoto(reader.result);
-        setCapturedBlob(blob);
-        console.log('Foto de teste carregada:', testPhotoUrl);
-      };
-      reader.readAsDataURL(blob);
-      
-    } catch (error) {
-      console.error('Erro ao carregar foto de teste:', error);
-      alert('Erro ao carregar foto de teste');
-    }
-  };
 
   return (
     <div className="camera-screen">
@@ -204,7 +227,14 @@ const CameraScreen = () => {
           {photo ? (
             <img src={photo} alt="Foto capturada" className="captured-photo" />
           ) : (
-            <video ref={videoRef} className="camera-video" autoPlay muted playsInline />
+            <video 
+              key={cameraKey} 
+              ref={videoRef} 
+              className="camera-video" 
+              autoPlay 
+              muted 
+              playsInline 
+            />
           )}
         </div>
       </div>
@@ -254,9 +284,6 @@ const CameraScreen = () => {
             <div className="capture-options">
               <button className="capture-button" onClick={handleCapture}>
                 Tirar foto
-              </button>
-              <button className="test-photo-button" onClick={handleUseTestPhoto}>
-                Usar foto de teste
               </button>
             </div>
           )}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { saveSelectedPhoto } from '../services/photoService';
 import '../styles/PhotoSelectionScreen.css';
 
 const PhotoSelectionScreen = () => {
@@ -37,11 +38,52 @@ const PhotoSelectionScreen = () => {
     setShowPrintModal(true);
   };
 
-  const handlePrintConfirm = () => {
+  const handlePrintConfirm = async () => {
     if (selectedPhoto) {
-      console.log('Foto selecionada para impressão:', selectedPhoto);
-      alert('Foto enviada para impressão!');
-      // Aqui seria implementada a lógica real de impressão
+      try {
+        console.log('Foto selecionada para impressão:', selectedPhoto);
+        
+        // Obtém o nome da foto original do localStorage
+        const uploadedPhotoName = localStorage.getItem('uploadedPhotoName');
+        if (!uploadedPhotoName) {
+          throw new Error('Nome da foto original não encontrado');
+        }
+        
+        // Extrai o nome base da foto (ex: foto_1234567890.jpg -> foto1)
+        const photoBaseName = uploadedPhotoName.replace(/\.(jpg|jpeg|png)$/i, '');
+        // Se o nome já começa com "foto", usa diretamente, senão extrai o número
+        let photoName;
+        if (photoBaseName.startsWith('foto_')) {
+          const photoNumber = photoBaseName.split('_').pop();
+          photoName = `foto${photoNumber || '1'}`;
+        } else if (photoBaseName.startsWith('foto')) {
+          // Se já é "foto" + número, usa diretamente
+          photoName = photoBaseName;
+        } else {
+          // Fallback para casos inesperados
+          photoName = 'foto1';
+        }
+        
+        console.log('Enviando para API:', {
+          photoName,
+          imageUrl: selectedPhoto.url
+        });
+        
+        // Chama a API para salvar a foto selecionada
+        const result = await saveSelectedPhoto(photoName, selectedPhoto.url);
+        
+        console.log('Resposta da API:', result);
+        
+        // Salva a foto selecionada no localStorage para a tela de impressão
+        localStorage.setItem('selectedPhoto', JSON.stringify(selectedPhoto));
+        
+        // Navega para a tela de impressão
+        navigate('/print');
+        
+      } catch (error) {
+        console.error('Erro ao salvar foto selecionada:', error);
+        alert('Erro ao enviar foto para impressão. Tente novamente.');
+      }
     }
     setShowPrintModal(false);
   };
@@ -52,11 +94,17 @@ const PhotoSelectionScreen = () => {
   };
 
   const handleStartOver = () => {
-    // Limpa todos os dados do localStorage
+    // Limpa TODOS os dados do localStorage
     localStorage.removeItem('uploadedPhoto');
+    localStorage.removeItem('uploadedPhotoName');
+    localStorage.removeItem('uploadedPhotoUrl');
     localStorage.removeItem('selectedGender');
     localStorage.removeItem('selectionData');
     localStorage.removeItem('generatedPhotos');
+    localStorage.removeItem('generatedImages');
+    localStorage.removeItem('selectedPhoto');
+    localStorage.removeItem('aiTaskId');
+    localStorage.removeItem('mockProgress');
     
     navigate('/camera');
   };
@@ -118,7 +166,7 @@ const PhotoSelectionScreen = () => {
         <div className="print-modal">
           <div className="print-modal-content">
             <div className="print-modal-header">
-              <h3>Deseja imprimir esta foto?</h3>
+              <h3>Deseja salvar esta foto?</h3>
             </div>
             
             <div className="print-modal-body">
@@ -139,7 +187,7 @@ const PhotoSelectionScreen = () => {
                 className="print-confirm-button"
                 onClick={handlePrintConfirm}
               >
-                Sim, Imprimir
+                Continuar
               </button>
             </div>
           </div>

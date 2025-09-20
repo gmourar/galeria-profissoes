@@ -465,6 +465,152 @@ export const checkProgress = async (taskId) => {
 };
 
 /**
+ * Salva a foto selecionada pela IA
+ * @param {string} photoName - Nome da foto (ex: foto1, foto2, etc.)
+ * @param {string} imageUrl - URL da imagem selecionada
+ * @returns {Promise<Object>} - Resposta da API
+ */
+export const saveSelectedPhoto = async (photoName, imageUrl) => {
+  try {
+    console.log('=== SAVE SELECTED PHOTO INICIADO ===');
+    console.log('Photo Name:', photoName);
+    console.log('Image URL:', imageUrl);
+    console.log('API_CONFIG.USE_MOCKS:', API_CONFIG.USE_MOCKS);
+    
+    // Se estiver com mocks ligados, simula a resposta
+    if (API_CONFIG.USE_MOCKS) {
+      console.log('Usando mocks para salvar foto selecionada');
+      // Simula delay da API
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      const mockResponse = {
+        success: true,
+        message: 'Foto salva com sucesso',
+        photo_name: photoName,
+        image_url: imageUrl
+      };
+      
+      return mockResponse;
+    }
+
+    // URL completa do endpoint
+    const saveUrl = getApiUrl(`/photos/${photoName}/save-ia`);
+    console.log('=== FAZENDO POST PARA SAVE-IA ===');
+    console.log('URL completa:', saveUrl);
+    console.log('Método: POST');
+    console.log('Headers: Content-Type: application/json');
+    
+    // Prepara o body
+    const requestBody = {
+      image_url: imageUrl
+    };
+    
+    console.log('=== BODY DA REQUISIÇÃO ===');
+    console.log('Body JSON:', JSON.stringify(requestBody));
+
+    const response = await fetch(saveUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestBody)
+    });
+
+    console.log('=== RESPOSTA DA API SAVE-IA ===');
+    console.log('Status:', response.status);
+    console.log('Status Text:', response.statusText);
+    console.log('OK:', response.ok);
+
+    if (!response.ok) {
+      throw new Error(`Erro ao salvar foto: ${response.status} ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    console.log('Resultado da API:', result);
+    return result;
+    
+  } catch (error) {
+    console.error('❌ ERRO AO SALVAR FOTO SELECIONADA:', error);
+    console.error('Detalhes do erro:', error.message);
+    throw error;
+  }
+};
+
+/**
+ * Atualiza a quantidade de impressão de uma foto
+ * @param {string} photoName - Nome da foto (ex: foto1, foto2, etc.)
+ * @param {number} quantidade - Quantidade de cópias para impressão
+ * @returns {Promise<Object>} - Resposta da API
+ */
+export const updatePhotoQuantity = async (photoName, quantidade) => {
+  try {
+    console.log('=== UPDATE PHOTO QUANTITY INICIADO ===');
+    console.log('Photo Name:', photoName);
+    console.log('Quantidade:', quantidade);
+    console.log('API_CONFIG.USE_MOCKS:', API_CONFIG.USE_MOCKS);
+    
+    // Se estiver com mocks ligados, simula a resposta
+    if (API_CONFIG.USE_MOCKS) {
+      console.log('Usando mocks para atualizar quantidade');
+      // Simula delay da API
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      const mockResponse = {
+        id: 1,
+        nome: photoName,
+        original_url: `https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/${photoName}.png`,
+        ia_url: `https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/${photoName}IA.png`,
+        quantidade: quantidade,
+        impressa: true
+      };
+      
+      return mockResponse;
+    }
+
+    // URL completa do endpoint
+    const updateUrl = getApiUrl(`/photos/${photoName}/quantidade`);
+    console.log('=== FAZENDO PATCH PARA QUANTIDADE ===');
+    console.log('URL completa:', updateUrl);
+    console.log('Método: PATCH');
+    console.log('Headers: Content-Type: application/json');
+    
+    // Prepara o body
+    const requestBody = {
+      quantidade: quantidade
+    };
+    
+    console.log('=== BODY DA REQUISIÇÃO ===');
+    console.log('Body JSON:', JSON.stringify(requestBody));
+
+    const response = await fetch(updateUrl, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestBody)
+    });
+
+    console.log('=== RESPOSTA DA API QUANTIDADE ===');
+    console.log('Status:', response.status);
+    console.log('Status Text:', response.statusText);
+    console.log('OK:', response.ok);
+
+    if (!response.ok) {
+      throw new Error(`Erro ao atualizar quantidade: ${response.status} ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    console.log('Resultado da API:', result);
+    return result;
+    
+  } catch (error) {
+    console.error('❌ ERRO AO ATUALIZAR QUANTIDADE:', error);
+    console.error('Detalhes do erro:', error.message);
+    throw error;
+  }
+};
+
+/**
  * Reseta o progresso mock para desenvolvimento
  */
 export const resetMockProgress = () => {
