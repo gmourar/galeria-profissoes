@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { saveSelectedPhoto, applyFrameToImage } from '../services/photoService';
+import { saveSelectedPhoto } from '../services/photoService';
 import '../styles/PhotoSelectionScreen.css';
 
 const PhotoSelectionScreen = () => {
@@ -69,18 +69,13 @@ const PhotoSelectionScreen = () => {
           imageUrl: selectedPhoto.url
         });
         
-        // Aplica moldura com logo e salva a foto
+        // Chama a API para salvar a foto selecionada
         const result = await saveSelectedPhoto(photoName, selectedPhoto.url);
         
         console.log('Resposta da API:', result);
         
         // Salva a foto selecionada no localStorage para a tela de impressão
-        // Inclui a URL da imagem com moldura se disponível
-        const photoWithFrame = {
-          ...selectedPhoto,
-          framedUrl: result.image_url || selectedPhoto.url
-        };
-        localStorage.setItem('selectedPhoto', JSON.stringify(photoWithFrame));
+        localStorage.setItem('selectedPhoto', JSON.stringify(selectedPhoto));
         
         // Navega para a tela de impressão
         navigate('/print');

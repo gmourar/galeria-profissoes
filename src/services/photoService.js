@@ -579,11 +579,6 @@ export const saveSelectedPhoto = async (photoName, imageUrl) => {
     console.log('Image URL:', imageUrl);
     console.log('API_CONFIG.USE_MOCKS:', API_CONFIG.USE_MOCKS);
     
-    // Aplica moldura com logo à imagem antes de salvar
-    console.log('Aplicando moldura com logo...');
-    const framedImageUrl = await applyFrameToImage(imageUrl);
-    console.log('Imagem com moldura:', framedImageUrl);
-    
     // Se estiver com mocks ligados, simula a resposta
     if (API_CONFIG.USE_MOCKS) {
       console.log('Usando mocks para salvar foto selecionada');
@@ -594,7 +589,7 @@ export const saveSelectedPhoto = async (photoName, imageUrl) => {
         success: true,
         message: 'Foto salva com sucesso',
         photo_name: photoName,
-        image_url: framedImageUrl // Usa a imagem com moldura
+        image_url: imageUrl
       };
       
       return mockResponse;
@@ -607,9 +602,9 @@ export const saveSelectedPhoto = async (photoName, imageUrl) => {
     console.log('Método: POST');
     console.log('Headers: Content-Type: application/json');
     
-    // Prepara o body com a imagem que já tem moldura
+    // Prepara o body
     const requestBody = {
-      image_url: framedImageUrl
+      image_url: imageUrl
     };
     
     console.log('=== BODY DA REQUISIÇÃO ===');
