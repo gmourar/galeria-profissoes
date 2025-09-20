@@ -115,17 +115,35 @@ const StyleSelectionScreen = () => {
         <h2>Escolha o estilo da sua foto profissional:</h2>
         
         <div className="styles-grid">
-          {AVAILABLE_STYLES.map((style) => (
-            <button
-              key={style.id}
-              className={`style-button ${selectedStyle === style.id ? 'selected' : ''}`}
-              onClick={() => handleStyleSelect(style.id)}
-              disabled={isGenerating}
-            >
-              <div className="style-icon">{style.icon}</div>
-              <div className="style-name">{style.name}</div>
-            </button>
-          ))}
+          {AVAILABLE_STYLES.map((style) => {
+            const genderCode = selectedGender === 'masculino' ? 'MASC' : 'FEM';
+            const professionFolder = style.id === 'REAL_STATE' ? 'REAL ESTATE' : style.id;
+            const imagePath = `/src/assets/${professionFolder}/${genderCode}.png`;
+            
+            return (
+              <button
+                key={style.id}
+                className={`style-button ${selectedStyle === style.id ? 'selected' : ''}`}
+                onClick={() => handleStyleSelect(style.id)}
+                disabled={isGenerating}
+              >
+                <div className="style-image">
+                  <img 
+                    src={imagePath} 
+                    alt={`${style.name} - ${genderCode}`}
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'flex';
+                    }}
+                  />
+                  <div className="style-fallback" style={{ display: 'none' }}>
+                    {style.name}
+                  </div>
+                </div>
+                <div className="style-name">{style.name}</div>
+              </button>
+            );
+          })}
         </div>
 
         {isGenerating ? (

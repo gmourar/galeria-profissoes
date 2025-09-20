@@ -4,8 +4,9 @@ import '../styles/PhotoSelectionScreen.css';
 
 const PhotoSelectionScreen = () => {
   const [generatedPhotos, setGeneratedPhotos] = useState([]);
-  const [selectedPhotos, setSelectedPhotos] = useState([]);
+  const [selectedPhoto, setSelectedPhoto] = useState(null);
   const [selectionData, setSelectionData] = useState(null);
+  const [showPrintModal, setShowPrintModal] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -31,33 +32,23 @@ const PhotoSelectionScreen = () => {
   }, [navigate]);
 
   const handlePhotoSelect = (photoId) => {
-    setSelectedPhotos(prev => {
-      if (prev.includes(photoId)) {
-        // Remove se já estiver selecionada
-        return prev.filter(id => id !== photoId);
-      } else {
-        // Adiciona se não estiver selecionada (máximo 4)
-        return prev.length < 4 ? [...prev, photoId] : prev;
-      }
-    });
+    const photo = generatedPhotos.find(p => p.id === photoId);
+    setSelectedPhoto(photo);
+    setShowPrintModal(true);
   };
 
-  const handleDownload = () => {
-    if (selectedPhotos.length === 0) {
-      alert('Selecione pelo menos uma foto para download');
-      return;
+  const handlePrintConfirm = () => {
+    if (selectedPhoto) {
+      console.log('Foto selecionada para impressão:', selectedPhoto);
+      alert('Foto enviada para impressão!');
+      // Aqui seria implementada a lógica real de impressão
     }
+    setShowPrintModal(false);
+  };
 
-    // Simula download das fotos selecionadas
-    const photosToDownload = generatedPhotos.filter(photo => 
-      selectedPhotos.includes(photo.id)
-    );
-    
-    console.log('Fotos selecionadas para download:', photosToDownload);
-    alert(`${selectedPhotos.length} foto(s) selecionada(s) para download!`);
-    
-    // Aqui seria implementada a lógica real de download
-    // Por exemplo, criar um ZIP com as fotos ou fazer download individual
+  const handlePrintCancel = () => {
+    setShowPrintModal(false);
+    setSelectedPhoto(null);
   };
 
   const handleStartOver = () => {
@@ -85,24 +76,21 @@ const PhotoSelectionScreen = () => {
       <div className="photo-container">
         <div className="header">
           <h2>Suas fotos profissionais estão prontas!</h2>
-          <p>Selecione até 4 fotos que você mais gostou:</p>
-          <div className="selection-info">
-            <span className="selected-count">{selectedPhotos.length}/4 fotos selecionadas</span>
-          </div>
+          <p>Clique na foto que você mais gostou para imprimir:</p>
         </div>
 
         <div className="photos-grid">
           {generatedPhotos.map((photo) => (
             <div
               key={photo.id}
-              className={`photo-item ${selectedPhotos.includes(photo.id) ? 'selected' : ''}`}
+              className="photo-item"
               onClick={() => handlePhotoSelect(photo.id)}
             >
               <div className="photo-wrapper">
                 <img src={photo.url} alt={`Foto profissional ${photo.id}`} />
                 <div className="photo-overlay">
                   <div className="selection-indicator">
-                    {selectedPhotos.includes(photo.id) ? '✓' : '+'}
+                    Imprimir
                   </div>
                 </div>
               </div>
@@ -111,14 +99,6 @@ const PhotoSelectionScreen = () => {
         </div>
 
         <div className="action-buttons">
-          <button 
-            className="download-button"
-            onClick={handleDownload}
-            disabled={selectedPhotos.length === 0}
-          >
-            Baixar Fotos Selecionadas ({selectedPhotos.length})
-          </button>
-          
           <button 
             className="start-over-button"
             onClick={handleStartOver}
@@ -132,6 +112,39 @@ const PhotoSelectionScreen = () => {
           <p>Gênero: <strong>{selectionData.gender}</strong></p>
         </div>
       </div>
+
+      {/* Modal de Impressão */}
+      {showPrintModal && selectedPhoto && (
+        <div className="print-modal">
+          <div className="print-modal-content">
+            <div className="print-modal-header">
+              <h3>Deseja imprimir esta foto?</h3>
+            </div>
+            
+            <div className="print-modal-body">
+              <div className="print-preview">
+                <img src={selectedPhoto.url} alt="Foto selecionada" />
+              </div>
+              <p>Esta foto será enviada para impressão.</p>
+            </div>
+            
+            <div className="print-modal-buttons">
+              <button 
+                className="print-cancel-button"
+                onClick={handlePrintCancel}
+              >
+                Cancelar
+              </button>
+              <button 
+                className="print-confirm-button"
+                onClick={handlePrintConfirm}
+              >
+                Sim, Imprimir
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -285,13 +285,52 @@ export const generatePhotoWithAI = async (prompt, photoUrl, styleRef) => {
  * @returns {string} - URL da imagem de referência
  */
 export const getStyleReferenceUrl = (profession, gender) => {
-  const genderCode = gender === 'masculino' ? 'MASC' : 'FEM';
-  const professionFolder = profession.toUpperCase();
+  // URLs das imagens de referência do Midjourney
+  const styleReferences = {
+    AGRO: {
+      masculino: 'https://cdn.midjourney.com/47d0a76c-b252-4eee-b944-40f79918c3d7/0_0.png',
+      feminino: 'https://cdn.midjourney.com/32b3d58d-46fb-486d-b802-d33b1015fabb/0_0.png'
+    },
+    BEAUTY: {
+      masculino: 'https://cdn.midjourney.com/47d0a76c-b252-4eee-b944-40f79918c3d7/0_0.png',
+      feminino: 'https://cdn.midjourney.com/32b3d58d-46fb-486d-b802-d33b1015fabb/0_0.png'
+    },
+    CRYPTO: {
+      masculino: 'https://cdn.midjourney.com/9480a46b-c47e-411c-ba7f-2a94e6438287/0_0.png',
+      feminino: 'https://cdn.midjourney.com/9480a46b-c47e-411c-ba7f-2a94e6438287/0_0.png'
+    },
+    ENTREPENEUR: {
+      masculino: 'https://cdn.midjourney.com/7ef601cc-b74d-4014-9e53-b6a29b9e01d4/0_0.png',
+      feminino: 'https://cdn.midjourney.com/b1b09b2e-9148-4c37-963b-f9ad083094c3/0_0.png'
+    },
+    FASHION: {
+      masculino: 'https://cdn.midjourney.com/88a7cb28-0a47-4606-a58a-f7a02e5a2867/0_0.png',
+      feminino: 'https://cdn.midjourney.com/58b19852-1468-433c-ad85-7f2d08f8b464/0_0.png'
+    },
+    FINANCE: {
+      masculino: 'https://cdn.midjourney.com/fa8a1254-332f-4aa4-a67c-0eb888a814a5/0_0.png',
+      feminino: 'https://cdn.midjourney.com/58b19852-1468-433c-ad85-7f2d08f8b464/0_0.png'
+    },
+    REAL_STATE: {
+      masculino: 'https://cdn.midjourney.com/b7cb8eaf-f128-416e-b1b5-fe22babcd044/0_0.png',
+      feminino: 'https://cdn.midjourney.com/4b429b29-16fe-4529-babd-d9a78b05de4b/0_0.png'
+    },
+    TECH: {
+      masculino: 'https://cdn.midjourney.com/d765e7b4-1561-47c0-ae07-ad2ff046f1f0/0_0.png',
+      feminino: 'https://cdn.midjourney.com/e95e5b2a-644b-4d71-86f5-4cb76a705941/0_0.png'
+    }
+  };
   
-  // Para REAL_STATE, o nome da pasta é "REAL ESTATE"
-  const folderName = professionFolder === 'REAL_STATE' ? 'REAL ESTATE' : professionFolder;
+  const professionKey = profession.toUpperCase();
+  const genderKey = gender.toLowerCase();
   
-  return `/src/assets/${folderName}/${genderCode}.png`;
+  if (styleReferences[professionKey] && styleReferences[professionKey][genderKey]) {
+    return styleReferences[professionKey][genderKey];
+  }
+  
+  // Fallback para caso não encontre
+  console.warn(`Referência de estilo não encontrada para ${profession} - ${gender}`);
+  return styleReferences.AGRO[genderKey] || styleReferences.AGRO.masculino;
 };
 
 /**
@@ -301,7 +340,7 @@ export const getStyleReferenceUrl = (profession, gender) => {
  */
 export const buildPhotoUrl = (photoName) => {
   // Constrói URL real da API
-  return `https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/${photoName}`;
+  return `https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/${photoName}.png`;
 };
 
 /**

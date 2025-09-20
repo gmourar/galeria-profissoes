@@ -253,10 +253,10 @@ const CameraScreen = () => {
           ) : (
             <div className="capture-options">
               <button className="capture-button" onClick={handleCapture}>
-                📸 Tirar foto
+                Tirar foto
               </button>
               <button className="test-photo-button" onClick={handleUseTestPhoto}>
-                 Usar foto de teste
+                Usar foto de teste
               </button>
             </div>
           )}
