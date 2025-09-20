@@ -12,12 +12,12 @@
 
 /* Logo da marca na câmera */
 .camera-logo-container {
-  margin-bottom: 2vh;
+  margin-bottom: 3vh;
   text-align: center;
 }
 
 .camera-logo {
-  max-height: 50px;
+  max-height: 200px;
   width: auto;
 }
 
@@ -249,6 +249,10 @@
     padding: 1vh;
   }
   
+  .camera-logo {
+    max-height: 100px;
+  }
+  
   .camera-container {
     max-width: 60vh;
   }
@@ -264,5 +268,18 @@
   
   .countdown-number {
     font-size: 10vh;
+  }
+}
+
+/* Para telas menores */
+@media (max-width: 768px) {
+  .camera-logo {
+    max-height: 80px;
+  }
+}
+
+@media (max-width: 480px) {
+  .camera-logo {
+    max-height: 60px;
   }
 }

@@ -4,7 +4,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 2vh;
   font-family: 'Arial', sans-serif;
   color: #ffffff;
 }
@@ -12,8 +12,8 @@
 .loading-container {
   max-width: 600px;
   width: 100%;
-  background: #1a1a1a;
-  border: 3px solid #ffffff;
+  background: #ffffff;
+  border: 3px solid #000000;
   border-radius: 30px;
   padding: 40px;
   box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
@@ -45,18 +45,18 @@
   width: 100%;
   height: 100%;
   border: 4px solid transparent;
-  border-top: 4px solid #ffffff;
+  border-top: 4px solid #000000;
   border-radius: 50%;
   animation: spin 2s linear infinite;
 }
 
 .spinner-ring:nth-child(1) {
-  border-top-color: #ffffff;
+  border-top-color: #000000;
   animation-delay: 0s;
 }
 
 .spinner-ring:nth-child(2) {
-  border-right-color: #cccccc;
+  border-right-color: #333333;
   animation-delay: 0.3s;
   width: 80%;
   height: 80%;
@@ -65,7 +65,7 @@
 }
 
 .spinner-ring:nth-child(3) {
-  border-bottom-color: #999999;
+  border-bottom-color: #666666;
   animation-delay: 0.6s;
   width: 60%;
   height: 60%;
@@ -82,9 +82,8 @@
 .loading-text h2 {
   font-size: 28px;
   font-weight: 700;
-  color: #ffffff;
+  color: #000000;
   margin: 0 0 10px 0;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 /* Barra de Progresso */
@@ -95,9 +94,9 @@
 
 .progress-bar-container {
   width: 100%;
-  height: 8px;
-  background: #333333;
-  border: 2px solid #ffffff;
+  height: 10px;
+  background: #f0f0f0;
+  border: 2px solid #000000;
   border-radius: 10px;
   overflow: hidden;
   margin-bottom: 15px;
@@ -106,7 +105,8 @@
 
 .progress-bar-fill {
   height: 100%;
-  border-radius: 10px;
+  background: #000000;
+  border-radius: 8px;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
@@ -130,61 +130,15 @@
 
 .progress-info {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   font-size: 14px;
 }
 
 .progress-percentage {
   font-weight: 700;
-  color: #ffffff;
+  color: #000000;
   font-size: 18px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-}
-
-.progress-time {
-  color: #718096;
-  font-weight: 500;
-}
-
-/* Dicas */
-.loading-tips {
-  background: #f7fafc;
-  border-radius: 16px;
-  padding: 24px;
-  text-align: left;
-  width: 100%;
-  border: 1px solid #e2e8f0;
-}
-
-.loading-tips h3 {
-  font-size: 18px;
-  font-weight: 600;
-  color: #2d3748;
-  margin: 0 0 16px 0;
-  text-align: center;
-}
-
-.loading-tips ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.loading-tips li {
-  padding: 8px 0;
-  color: #4a5568;
-  font-size: 14px;
-  line-height: 1.5;
-  position: relative;
-  padding-left: 20px;
-}
-
-.loading-tips li::before {
-  content: '✨';
-  position: absolute;
-  left: 0;
-  top: 8px;
 }
 
 /* Tela de Erro */
@@ -203,22 +157,22 @@
 .error-content h2 {
   font-size: 24px;
   font-weight: 700;
-  color: #e53e3e;
+  color: #000000;
   margin: 0;
 }
 
 .error-content p {
-  color: #718096;
+  color: #333333;
   font-size: 16px;
   margin: 0;
 }
 
 .retry-button {
   background: #000000;
-  color: white;
-  border: none;
+  color: #ffffff;
+  border: 3px solid #000000;
   padding: 12px 24px;
-  border-radius: 12px;
+  border-radius: 25px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
@@ -227,8 +181,9 @@
 }
 
 .retry-button:hover {
+  background: #333333;
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 /* Responsividade */
@@ -245,10 +200,6 @@
   .loading-animation {
     width: 100px;
     height: 100px;
-  }
-  
-  .loading-tips {
-    padding: 20px;
   }
 }
 
@@ -301,7 +252,7 @@
 }
 
 .timeout-modal-content p {
-  color: #666666;
+  color: #333333;
   font-size: 16px;
   margin: 0 0 25px 0;
   line-height: 1.4;

@@ -42,17 +42,17 @@
   background: #ffffff;
   border: 3px solid #000000;
   border-radius: 20px;
-  padding: 2vh;
+  padding: 0;
   cursor: pointer;
   transition: all 0.3s ease;
   color: #000000;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5vh;
   min-height: 20vh;
   justify-content: center;
   aspect-ratio: 3/4;
+  overflow: hidden;
 }
 
 .style-button:hover {
@@ -70,22 +70,21 @@
 
 .style-image {
   width: 100%;
-  height: 15vh;
+  height: 70%;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 15px 15px 0 0;
   overflow: hidden;
   background: #f5f5f5;
-  flex: 1;
-  margin: -2vh -2vh 0 -2vh;
-  width: calc(100% + 4vh);
+  position: relative;
 }
 
 .style-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
   border-radius: 15px 15px 0 0;
 }
 
@@ -100,14 +99,21 @@
   font-size: 1.2vh;
   font-weight: bold;
   border-radius: 15px 15px 0 0;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .style-name {
   font-size: 2vh;
   font-weight: bold;
   text-align: center;
-  margin-top: 1vh;
+  padding: 1.5vh;
   flex-shrink: 0;
+  height: 30%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .confirm-button {
@@ -153,16 +159,12 @@
   }
   
   .style-button {
-    min-height: 10vh;
-    padding: 1.5vh;
-  }
-  
-  .style-icon {
-    font-size: 1.5vh;
+    min-height: 15vh;
   }
   
   .style-name {
-    font-size: 1.2vh;
+    font-size: 1.5vh;
+    padding: 1vh;
   }
   
   .confirm-button {
@@ -186,14 +188,14 @@
 }
 
 .progress-info h3 {
-  color: #ffffff;
+  color: #000000;
   font-size: 2vh;
   margin-bottom: 1vh;
   font-weight: bold;
 }
 
 .progress-info p {
-  color: #ffffff;
+  color: #666666;
   font-size: 1.5vh;
   margin: 0;
 }
@@ -216,7 +218,7 @@
 
 .progress-percentage {
   text-align: center;
-  color: #ffffff;
+  color: #000000;
   font-size: 1.8vh;
   font-weight: bold;
 }
@@ -259,5 +261,14 @@
   .spinner {
     width: 50px;
     height: 50px;
+  }
+  
+  .style-button {
+    min-height: 25vh;
+  }
+  
+  .style-name {
+    font-size: 2vh;
+    padding: 1.5vh;
   }
 }
