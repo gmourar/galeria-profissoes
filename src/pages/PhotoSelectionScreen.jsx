@@ -10,13 +10,21 @@ const PhotoSelectionScreen = () => {
 
   useEffect(() => {
     // Recupera dados do localStorage
-    const photos = JSON.parse(localStorage.getItem('generatedPhotos') || '[]');
+    const imageUrls = JSON.parse(localStorage.getItem('generatedImages') || '[]');
     const data = JSON.parse(localStorage.getItem('selectionData') || '{}');
     
-    if (photos.length === 0 || !data.style) {
+    if (imageUrls.length === 0 || !data.style) {
       navigate('/camera');
       return;
     }
+    
+    // Converte URLs em objetos de foto
+    const photos = imageUrls.map((url, index) => ({
+      id: `generated_${index + 1}`,
+      url: url,
+      style: data.style,
+      generatedAt: new Date().toISOString()
+    }));
     
     setGeneratedPhotos(photos);
     setSelectionData(data);

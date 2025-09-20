@@ -10,29 +10,63 @@ const CameraScreen = () => {
   const [capturedBlob, setCapturedBlob] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [useTestPhoto, setUseTestPhoto] = useState(false);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     let activeStream;
+    let isInitialized = false;
+    
     const startCamera = async () => {
+      if (isInitialized) return;
+      
       try {
+        // Para qualquer stream existente primeiro
+        if (activeStream) {
+          activeStream.getTracks().forEach(track => track.stop());
+        }
+        
         const stream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: 'user' },
           audio: false
         });
         activeStream = stream;
         const video = videoRef.current;
+        
         if (video) {
+          // Limpa srcObject anterior se existir
+          if (video.srcObject) {
+            video.srcObject = null;
+          }
+          
           video.srcObject = stream;
-          await video.play();
+          
+          // Aguarda o vídeo estar pronto antes de tentar play
+          const handleLoadedMetadata = async () => {
+            try {
+              if (video.paused) {
+                await video.play();
+              }
+              isInitialized = true;
+              video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+            } catch (playError) {
+              console.warn('Erro ao reproduzir vídeo:', playError);
+              // Continua mesmo com erro de play
+              isInitialized = true;
+              video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+            }
+          };
+          
+          video.addEventListener('loadedmetadata', handleLoadedMetadata);
         }
       } catch (err) {
         console.error('Erro ao acessar a câmera:', err);
         alert('Não foi possível acessar a câmera. Verifique as permissões do navegador.');
       }
     };
+    
     startCamera();
 
     return () => {
@@ -107,7 +141,19 @@ const CameraScreen = () => {
         console.log('Upload realizado com sucesso:', result);
         setIsUploading(false);
         setUploadProgress(0);
-        localStorage.setItem('uploadedPhoto', JSON.stringify(result));
+        
+        // Salva dados com estrutura correta
+        const photoData = {
+          photoId: result.id,
+          nome: result.nome,
+          original_url: result.original_url,
+          ia_url: result.ia_url,
+          quantidade: result.quantidade,
+          impressa: result.impressa
+        };
+        
+        console.log('Salvando dados da foto:', photoData);
+        localStorage.setItem('uploadedPhoto', JSON.stringify(photoData));
         navigate('/gender-selection');
       },
       (error) => {
@@ -124,6 +170,32 @@ const CameraScreen = () => {
     setCapturedBlob(null);
     setIsCapturing(false);
     setCountdown(null);
+    setUseTestPhoto(false);
+  };
+
+  const handleUseTestPhoto = async () => {
+    try {
+      console.log('Usando foto de teste...');
+      setUseTestPhoto(true);
+      
+      // Carrega a foto de teste
+      const testPhotoUrl = '/src/assets/ramirex.jpg';
+      const response = await fetch(testPhotoUrl);
+      const blob = await response.blob();
+      
+      // Converte para data URL para preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhoto(reader.result);
+        setCapturedBlob(blob);
+        console.log('Foto de teste carregada:', testPhotoUrl);
+      };
+      reader.readAsDataURL(blob);
+      
+    } catch (error) {
+      console.error('Erro ao carregar foto de teste:', error);
+      alert('Erro ao carregar foto de teste');
+    }
   };
 
   return (
@@ -180,9 +252,14 @@ const CameraScreen = () => {
               <p>Tirando foto em...</p>
             </div>
           ) : (
-            <button className="capture-button" onClick={handleCapture}>
-              Tirar foto
-            </button>
+            <div className="capture-options">
+              <button className="capture-button" onClick={handleCapture}>
+                📸 Tirar foto
+              </button>
+              <button className="test-photo-button" onClick={handleUseTestPhoto}>
+                🧪 Usar foto de teste
+              </button>
+            </div>
           )}
         </div>
       )}

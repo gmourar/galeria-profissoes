@@ -1,10 +1,8 @@
 // Configuração da API
-// Em projetos Vite, as variáveis de ambiente são expostas via import.meta.env com prefixo VITE_
+// FORÇA URL CORRETA - SEMPRE 127.0.0.1:8000
 export const API_CONFIG = {
-  // URL base da API - configure VITE_API_URL no .env
-  BASE_URL: (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_URL)
-    ? import.meta.env.VITE_API_URL
-    : 'http://localhost:3000',
+  // URL base da API - FORÇADA para 127.0.0.1:8000
+  BASE_URL: 'http://127.0.0.1:8000',
   
   // Endpoints
   ENDPOINTS: {
@@ -13,10 +11,16 @@ export const API_CONFIG = {
   },
   
   // Flag para uso de mocks durante desenvolvimento
-  USE_MOCKS: (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_USE_MOCKS)
-    ? String(import.meta.env.VITE_USE_MOCKS).toLowerCase() === 'true'
-    : false
+  USE_MOCKS: false // DESABILITADO - Usar API real
 };
+
+// Debug: log da configuração
+console.log('=== API CONFIG CARREGADO ===');
+console.log('API_CONFIG completo:', API_CONFIG);
+console.log('BASE_URL FORÇADA:', API_CONFIG.BASE_URL);
+console.log('USE_MOCKS:', API_CONFIG.USE_MOCKS);
+console.log('ENDPOINTS:', API_CONFIG.ENDPOINTS);
+console.log('=== FIM CONFIG ===');
 
 // Função para obter a URL completa do endpoint
 export const getApiUrl = (endpoint) => {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AVAILABLE_STYLES, getPrompt } from '../data/prompts';
-import { generatePhotos } from '../services/photoService';
+import { generatePhotoWithAI, getStyleReferenceUrl, buildPhotoUrl, resetMockProgress } from '../services/photoService';
 import '../styles/StyleSelectionScreen.css';
 
 const StyleSelectionScreen = () => {
@@ -15,9 +15,17 @@ const StyleSelectionScreen = () => {
   const selectedGender = localStorage.getItem('selectedGender');
 
   useEffect(() => {
+    console.log('=== STYLE SELECTION SCREEN ===');
+    console.log('uploadedPhotoData:', uploadedPhotoData);
+    console.log('selectedGender:', selectedGender);
+    console.log('uploadedPhotoData.photoId:', uploadedPhotoData.photoId);
+    
     // Se não há dados necessários, volta para a câmera
     if (!uploadedPhotoData.photoId || !selectedGender) {
+      console.log('Dados insuficientes, redirecionando para câmera');
       navigate('/camera');
+    } else {
+      console.log('Dados OK, exibindo tela de seleção de profissões');
     }
   }, [navigate, uploadedPhotoData, selectedGender]);
 
@@ -32,14 +40,29 @@ const StyleSelectionScreen = () => {
 
     setIsGenerating(true);
     setGenerationProgress(0);
+    
+    // Reseta o progresso mock para nova geração
+    resetMockProgress();
 
     try {
+      // Obtém o nome da foto salvo no localStorage
+      const photoName = localStorage.getItem('uploadedPhotoName');
+      if (!photoName) {
+        throw new Error('Nome da foto não encontrado');
+      }
+
+      // Constrói a URL da foto original
+      const photoUrl = buildPhotoUrl(photoName);
+      
+      // Obtém a URL da referência de estilo
+      const styleRef = getStyleReferenceUrl(selectedStyle, selectedGender);
+
       // Obtém o prompt baseado no gênero e estilo
       const prompt = getPrompt(
         selectedGender,
         selectedStyle,
-        uploadedPhotoData.url,
-        'https://koala.sh/api/image/v2-c9lyf-7aovd.jpg?width=1216&height=832&dream' // URL de referência padrão
+        photoUrl,
+        styleRef
       );
 
       // Salva os dados da seleção
@@ -47,7 +70,9 @@ const StyleSelectionScreen = () => {
         gender: selectedGender,
         style: selectedStyle,
         prompt: prompt,
-        originalPhoto: uploadedPhotoData
+        originalPhoto: uploadedPhotoData,
+        photoUrl: photoUrl,
+        styleRef: styleRef
       };
       localStorage.setItem('selectionData', JSON.stringify(selectionData));
 
@@ -63,17 +88,17 @@ const StyleSelectionScreen = () => {
       }, 500);
 
       // Envia prompt para o backend gerar as fotos
-      const generatedPhotos = await generatePhotos(prompt);
+      const aiResponse = await generatePhotoWithAI(prompt, photoUrl, styleRef);
       
       clearInterval(progressInterval);
       setGenerationProgress(100);
 
-      // Salva as fotos geradas
-      localStorage.setItem('generatedPhotos', JSON.stringify(generatedPhotos));
+      // Salva a resposta da IA (task_id)
+      localStorage.setItem('aiTaskId', aiResponse.task_id);
 
-      // Navega para a tela de seleção de fotos
+      // Navega para a tela de loading
       setTimeout(() => {
-        navigate('/photo-selection');
+        navigate('/loading');
       }, 1000);
 
     } catch (error) {
