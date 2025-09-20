@@ -27,7 +27,7 @@ const StyleSelectionScreen = () => {
     } else {
       console.log('Dados OK, exibindo tela de seleção de profissões');
     }
-  }, [navigate, uploadedPhotoData, selectedGender]);
+  }, [navigate]);
 
   const handleStyleSelect = (styleId) => {
     setSelectedStyle(styleId);

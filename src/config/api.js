@@ -24,5 +24,11 @@ console.log('=== FIM CONFIG ===');
 
 // Função para obter a URL completa do endpoint
 export const getApiUrl = (endpoint) => {
-  return `${API_CONFIG.BASE_URL}${endpoint}`;
+  const fullUrl = `${API_CONFIG.BASE_URL}${endpoint}`;
+  console.log('=== GET API URL ===');
+  console.log('Endpoint recebido:', endpoint);
+  console.log('BASE_URL:', API_CONFIG.BASE_URL);
+  console.log('URL completa gerada:', fullUrl);
+  console.log('=== FIM GET API URL ===');
+  return fullUrl;
 };

@@ -9,7 +9,7 @@ export const PROMPTS_DATA = {
     
     ENTREPENEUR: "portrait as an entrepreneur CEO tech innovator standing inside a cybernetic innovation lab, floating holographic circuits screens --cref {photoUrl} --sref {styleRef} --ar 9:16",
     
-    FASHION: "a fashion designer in his high tech atelier --cref {photoUrl} --sref {styleRef} --ar 9:16",
+    FASHION: "portrait of a person wearing a red varsity jacket worn over a tight black t-shirt, paired with distressed cargo jeans, accessorized with layers of red scarves and shawls, a large watch, sunglasses, and chunky sneakers, this person is holding a red guitar with white accents. The background features a massive rock festival stage with bright strobe lights and a crowd pumping with energy, a person has spotless skin, wrinkle free skin, smooth skin --cref https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/foto8.png --sref https://koala.sh/api/image/v2-c9lyf-7aovd.jpg?width=1216&height=832&dream --ar 9:16 --cw 50 --sw 50",
     
     FINANCE: "Financial CEO, standing in front of coworkers at a modern fintech hub, surrounded by people with laptops and a big screen with trading graphics, collaborative financial innovation space --cref {photoUrl} --sref {styleRef} --ar 9:16",
     

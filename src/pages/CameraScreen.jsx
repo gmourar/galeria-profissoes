@@ -23,7 +23,6 @@ const CameraScreen = () => {
       if (isInitialized) return;
       
       try {
-        // Para qualquer stream existente primeiro
         if (activeStream) {
           activeStream.getTracks().forEach(track => track.stop());
         }
@@ -257,7 +256,7 @@ const CameraScreen = () => {
                 📸 Tirar foto
               </button>
               <button className="test-photo-button" onClick={handleUseTestPhoto}>
-                🧪 Usar foto de teste
+                 Usar foto de teste
               </button>
             </div>
           )}

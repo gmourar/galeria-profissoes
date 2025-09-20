@@ -370,7 +370,23 @@ export const checkProgress = async (taskId) => {
     console.log('=== FAZENDO REQUISIÇÃO REAL ===');
     console.log('URL completa:', progressUrl);
     console.log('Método: GET');
+    console.log('Headers: Content-Type: application/json');
+    console.log('Body: NENHUM (requisição GET)');
     
+    // Debug: verifica se o taskId está correto
+    console.log('=== DEBUG TASK ID ===');
+    console.log('Task ID recebido:', taskId);
+    console.log('Tipo do Task ID:', typeof taskId);
+    console.log('Task ID é string?', typeof taskId === 'string');
+    console.log('Task ID tem tamanho:', taskId ? taskId.length : 'undefined');
+    console.log('Task ID é válido?', taskId && taskId.length > 0);
+    
+    // Verifica se o taskId é válido
+    if (!taskId || typeof taskId !== 'string' || taskId.trim() === '') {
+      throw new Error('Task ID inválido ou vazio');
+    }
+    
+    // Faz a requisição GET simples (sem body)
     const response = await fetch(progressUrl, {
       method: 'GET',
       headers: {
@@ -382,13 +398,24 @@ export const checkProgress = async (taskId) => {
     console.log('Status:', response.status);
     console.log('Status Text:', response.statusText);
     console.log('OK:', response.ok);
+    console.log('Headers da resposta:', response.headers);
+    console.log('Content-Type:', response.headers.get('content-type'));
 
     if (!response.ok) {
       throw new Error(`Erro ao verificar progresso: ${response.status} ${response.statusText}`);
     }
 
     const result = await response.json();
-    console.log('Resultado da API:', result);
+    console.log('=== RESULTADO DA API ===');
+    console.log('Resultado completo:', result);
+    console.log('Progress:', result.progress);
+    console.log('Image URLs:', result.image_urls);
+    console.log('Tipo do progress:', typeof result.progress);
+    console.log('Progress é número?', typeof result.progress === 'number');
+    console.log('Progress é zero?', result.progress === 0);
+    console.log('Progress é null?', result.progress === null);
+    console.log('Progress é undefined?', result.progress === undefined);
+    
     return result;
     
   } catch (error) {
