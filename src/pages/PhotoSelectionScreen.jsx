@@ -140,9 +140,6 @@ const PhotoSelectionScreen = () => {
             >
               <div className="photo-wrapper">
                 <div className="photo-frame">
-                  <div className="frame-logo">
-                    <img src="/src/assets/villa11.png" alt="Logo Villa" className="frame-logo-img" />
-                  </div>
                   <img src={photo.url} alt={`Foto profissional ${photo.id}`} className="photo-image" />
                 </div>
                 <div className="photo-overlay">

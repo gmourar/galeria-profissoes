@@ -5,7 +5,6 @@ import QRCode from 'qrcode';
 import '../styles/PrintScreen.css';
 
 const PrintScreen = () => {
-  const [selectedQuantity, setSelectedQuantity] = useState(1);
   const [isPrinting, setIsPrinting] = useState(false);
   const [printProgress, setPrintProgress] = useState(0);
   const [qrCodeUrl, setQrCodeUrl] = useState('');
@@ -16,7 +15,8 @@ const PrintScreen = () => {
   const selectedPhoto = JSON.parse(localStorage.getItem('selectedPhoto') || '{}');
   const uploadedPhotoName = localStorage.getItem('uploadedPhotoName');
 
-  const quantities = [1, 2, 3];
+  // Quantidade sempre será 1
+  const selectedQuantity = 1;
 
   // Gera QR code com o link da imagem selecionada
   useEffect(() => {
@@ -41,9 +41,6 @@ const PrintScreen = () => {
     }
   };
 
-  const handleQuantityChange = (e) => {
-    setSelectedQuantity(parseInt(e.target.value));
-  };
 
   const handlePrint = async () => {
     if (!selectedPhoto || !uploadedPhotoName) {
@@ -112,7 +109,8 @@ const PrintScreen = () => {
   };
 
   const handleBack = () => {
-    navigate('/photo-selection');
+    // Volta para a câmera (pessoa optou por não imprimir)
+    navigate('/camera');
   };
 
   const handleStartOver = () => {
@@ -151,30 +149,11 @@ const PrintScreen = () => {
       <div className="print-container">
         <div className="print-header">
           <h2>Configurar Impressão</h2>
-          <p>Selecione a quantidade de cópias que deseja imprimir</p>
+          <p>Pronto para imprimir sua foto profissional</p>
         </div>
 
         <div className="photo-preview">
           <img src={selectedPhoto.url} alt="Foto selecionada" className="selected-photo" />
-        </div>
-
-        <div className="quantity-selection">
-          <label htmlFor="quantity-select" className="quantity-label">
-            Quantidade de cópias:
-          </label>
-          <select
-            id="quantity-select"
-            value={selectedQuantity}
-            onChange={handleQuantityChange}
-            disabled={isPrinting}
-            className="quantity-select"
-          >
-            {quantities.map(qty => (
-              <option key={qty} value={qty}>
-                {qty} {qty === 1 ? 'cópia' : 'cópias'}
-              </option>
-            ))}
-          </select>
         </div>
 
         {isPrinting ? (
@@ -216,7 +195,7 @@ const PrintScreen = () => {
                 onClick={handlePrint}
                 disabled={isPrinting}
               >
-                Imprimir {selectedQuantity} {selectedQuantity === 1 ? 'cópia' : 'cópias'}
+                Imprimir 1 cópia
               </button>
             </div>
           </div>
