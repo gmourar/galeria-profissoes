@@ -13,7 +13,7 @@ export const PROMPTS_DATA = {
     
     FINANCE: "Financial CEO, standing in front of coworkers at a modern fintech hub, surrounded by people with laptops and a big screen with trading graphics, collaborative financial innovation space --cref {photoUrl} --sref https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaFinanceHomem.png --ar 9:16",
     
-    REAL_STATE: "portrait as a real state agent, portrait style picture, visible face, standing inside a futuristic real estate showroom, holographic skyscrapers floating around, glowing floor plans in the air, high-tech corporate style --cref {photoUrl} --sref https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaRealEstateHomem.png --ar 9:16",
+    REAL_STATE: "portrait as a real state agent, portrait style picture, visible face, standing inside a futuristic real estate showroom, holographic skyscrapers floating around, glowing floor plans in the air, high-tech corporate style --cref {photoUrl} --sref https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaRealEstateHomem.png --ar 9:16 --cw 25 --sw 90",
     
     TECH: "portrait of a tech innovator at a hackathon with other developers, open laptops everywhere, cables, coffee cups, neon signage in background, energetic software innovation mood --cref {photoUrl} --sref https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaTechHomem.png --ar 9:16"
   },

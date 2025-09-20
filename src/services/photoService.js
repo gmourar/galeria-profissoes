@@ -36,6 +36,23 @@ export const base64ToBlob = (base64String, mimeType = 'image/jpeg') => {
  * @param {Function} onSuccess
  * @param {Function} onError
  */
+/**
+ * Aplica moldura (e/ou overlay de logo) e devolve um Blob pronto para upload
+ * @param {string} imageUrl - URL da imagem original
+ * @param {Object} opts
+ * @param {string} [opts.logoSrc='/src/assets/villa11.png'] - caminho do logo
+ * @param {string} [opts.frameSrc] - PNG de moldura com fundo transparente (opcional)
+ * @param {number} [opts.quality=0.9] - qualidade do JPEG
+ * @returns {Promise<Blob>}
+ */
+/**
+ * Aplica moldura e salva no endpoint /photos/{photoName}/save-ia
+ * (faz upload do resultado para obter uma URL pública antes de salvar)
+ * @param {string} photoName - ex.: 'foto1'
+ * @param {string} imageUrl  - URL da imagem que a IA gerou/selecionou
+ * @param {Object} frameOpts - opções repassadas ao applyFrameToImageBlob
+ * @returns {Promise<Object>} - resposta do save-ia
+ */
 export const uploadPhoto = async (photoInput, onProgress, onSuccess, onError) => {
   try {
     // Normaliza para Blob
@@ -109,6 +126,99 @@ export const uploadPhoto = async (photoInput, onProgress, onSuccess, onError) =>
       onError(error);
     }
   }
+};
+export const applyFrameToImageBlob = async (imageUrl, opts = {}) => {
+  const {
+    logoSrc = '/moldura.png',
+    frameSrc,
+    quality = 0.9
+  } = opts;
+
+  return new Promise((resolve, reject) => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    const baseImg = new Image();
+    baseImg.crossOrigin = 'anonymous';
+
+    baseImg.onload = () => {
+      try {
+        const maxW = 800;
+        const maxH = 1200;
+        const r = baseImg.width / baseImg.height;
+        let w, h;
+        if (r > maxW / maxH) { w = maxW; h = Math.round(maxW / r); }
+        else { h = maxH; w = Math.round(maxH * r); }
+
+        canvas.width = w;
+        canvas.height = h;
+
+        // 1) imagem base
+        ctx.drawImage(baseImg, 0, 0, w, h);
+
+        const finishToBlob = () => {
+          canvas.toBlob((blob) => {
+            if (!blob) return reject(new Error('Falha ao gerar blob'));
+            resolve(blob);
+          }, 'image/jpeg', quality);
+        };
+
+        const drawBorderLast = () => {
+          // 4) borda por último para não ser coberta
+          const border = Math.round(Math.min(w, h) * 0.02); // 2%
+          ctx.lineWidth = border;
+          ctx.strokeStyle = '#ffffff';
+          ctx.strokeRect(border / 2, border / 2, w - border, h - border);
+          finishToBlob();
+        };
+
+        const drawLogoThenBorder = () => {
+          if (!logoSrc) { drawBorderLast(); return; }
+          const logo = new Image();
+          logo.crossOrigin = 'anonymous';
+          logo.onload = () => {
+            const size = Math.round(Math.min(w, h) * 0.08);
+            const x = Math.round(size * 0.6);
+            const y = Math.round(size * 0.6);
+            ctx.fillStyle = 'rgba(255,255,255,0.9)';
+            ctx.fillRect(x - 6, y - 6, size + 12, size + 12);
+            ctx.drawImage(logo, x, y, size, size);
+            drawBorderLast();
+          };
+          logo.onerror = () => drawBorderLast();
+          logo.src = logoSrc;
+        };
+
+        const drawFrameThenLogo = () => {
+          if (!frameSrc) { drawLogoThenBorder(); return; }
+          const frame = new Image();
+          frame.crossOrigin = 'anonymous';
+          frame.onload = () => { ctx.drawImage(frame, 0, 0, w, h); drawLogoThenBorder(); };
+          frame.onerror = () => { drawLogoThenBorder(); };
+          frame.src = frameSrc;
+        };
+
+        drawFrameThenLogo();
+      } catch (e) { reject(e); }
+    };
+
+    baseImg.onerror = () => reject(new Error('Erro ao carregar imagem base'));
+    baseImg.src = imageUrl;
+  });
+};
+
+export const saveSelectedPhotoWithFrame = async (photoName, imageUrl, frameOpts = {}) => {
+  // 1) gera o Blob com moldura
+  const framedBlob = await applyFrameToImageBlob(imageUrl, frameOpts);
+
+  // 2) sobe esse Blob e pega a URL pública
+  const uploaded = await uploadPhoto(framedBlob);
+  const publicUrl = uploaded?.original_url;
+  if (!publicUrl) throw new Error('Upload não retornou URL pública');
+
+  // 3) salva no endpoint existente
+  const result = await saveSelectedPhoto(photoName, publicUrl);
+  return result;
 };
 
 /**

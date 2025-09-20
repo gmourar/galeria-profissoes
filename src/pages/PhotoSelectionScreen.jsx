@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { saveSelectedPhoto } from '../services/photoService';
+import { saveSelectedPhotoWithFrame } from '../services/photoService';
 import '../styles/PhotoSelectionScreen.css';
 
 const PhotoSelectionScreen = () => {
@@ -14,26 +14,26 @@ const PhotoSelectionScreen = () => {
     // Recupera dados do localStorage
     const imageUrls = JSON.parse(localStorage.getItem('generatedImages') || '[]');
     const data = JSON.parse(localStorage.getItem('selectionData') || '{}');
-    
+
     if (imageUrls.length === 0 || !data.style) {
       navigate('/camera');
       return;
     }
-    
+
     // Converte URLs em objetos de foto
     const photos = imageUrls.map((url, index) => ({
       id: `generated_${index + 1}`,
-      url: url,
+      url,
       style: data.style,
-      generatedAt: new Date().toISOString()
+      generatedAt: new Date().toISOString(),
     }));
-    
+
     setGeneratedPhotos(photos);
     setSelectionData(data);
   }, [navigate]);
 
   const handlePhotoSelect = (photoId) => {
-    const photo = generatedPhotos.find(p => p.id === photoId);
+    const photo = generatedPhotos.find((p) => p.id === photoId);
     setSelectedPhoto(photo);
     setShowPrintModal(true);
   };
@@ -42,44 +42,45 @@ const PhotoSelectionScreen = () => {
     if (selectedPhoto) {
       try {
         console.log('Foto selecionada para impressão:', selectedPhoto);
-        
-        // Obtém o nome da foto original do localStorage
+
         const uploadedPhotoName = localStorage.getItem('uploadedPhotoName');
         if (!uploadedPhotoName) {
           throw new Error('Nome da foto original não encontrado');
         }
-        
-        // Extrai o nome base da foto (ex: foto_1234567890.jpg -> foto1)
+
         const photoBaseName = uploadedPhotoName.replace(/\.(jpg|jpeg|png)$/i, '');
-        // Se o nome já começa com "foto", usa diretamente, senão extrai o número
         let photoName;
         if (photoBaseName.startsWith('foto_')) {
           const photoNumber = photoBaseName.split('_').pop();
           photoName = `foto${photoNumber || '1'}`;
         } else if (photoBaseName.startsWith('foto')) {
-          // Se já é "foto" + número, usa diretamente
           photoName = photoBaseName;
         } else {
-          // Fallback para casos inesperados
           photoName = 'foto1';
         }
-        
-        console.log('Enviando para API:', {
+
+        console.log('Enviando para API (com moldura):', {
           photoName,
-          imageUrl: selectedPhoto.url
+          imageUrl: selectedPhoto.url,
         });
-        
-        // Chama a API para salvar a foto selecionada
-        const result = await saveSelectedPhoto(photoName, selectedPhoto.url);
-        
-        console.log('Resposta da API:', result);
-        
-        // Salva a foto selecionada no localStorage para a tela de impressão
-        localStorage.setItem('selectedPhoto', JSON.stringify(selectedPhoto));
-        
-        // Navega para a tela de impressão
+
+        // Aplica moldura em canvas -> faz upload -> salva e retorna URL pública
+        const response = await saveSelectedPhotoWithFrame(photoName, selectedPhoto.url, {
+          frameSrc: '/moldura.png', // coloque moldura em /public
+          // logoSrc: '/logo.png',  // opcional
+          quality: 0.92,
+        });
+
+        // Esperamos pelo menos { publicUrl } no retorno
+        console.log('Resposta da API (saveSelectedPhotoWithFrame):', response);
+
+        const publicUrl = response?.publicUrl || selectedPhoto.url;
+
+        // Salva a foto selecionada JÁ COM MOLDURA para a próxima tela
+        const selectedWithFrame = { ...selectedPhoto, url: publicUrl };
+        localStorage.setItem('selectedPhoto', JSON.stringify(selectedWithFrame));
+
         navigate('/print');
-        
       } catch (error) {
         console.error('Erro ao salvar foto selecionada:', error);
         alert('Erro ao enviar foto para impressão. Tente novamente.');
@@ -105,7 +106,7 @@ const PhotoSelectionScreen = () => {
     localStorage.removeItem('selectedPhoto');
     localStorage.removeItem('aiTaskId');
     localStorage.removeItem('mockProgress');
-    
+
     navigate('/camera');
   };
 
@@ -123,9 +124,11 @@ const PhotoSelectionScreen = () => {
     <div className="photo-selection-screen">
       <div className="photo-container">
         <div className="logo-container">
-          <img src="/src/assets/villa11.png" alt="Logo Villa" className="brand-logo" />
+          {/* Se a logo estiver em /public, use /villa11.png. 
+             Se estiver em src/assets, importe com import logo from '...'; */}
+          <img src="/villa11.png" alt="Logo Villa" className="brand-logo" />
         </div>
-        
+
         <div className="header">
           <h2>Suas fotos profissionais estão prontas!</h2>
           <p>Clique na foto que você mais gostou para imprimir:</p>
@@ -140,12 +143,14 @@ const PhotoSelectionScreen = () => {
             >
               <div className="photo-wrapper">
                 <div className="photo-frame">
-                  <img src={photo.url} alt={`Foto profissional ${photo.id}`} className="photo-image" />
+                  <img
+                    src={photo.url}
+                    alt={`Foto profissional ${photo.id}`}
+                    className="photo-image"
+                  />
                 </div>
                 <div className="photo-overlay">
-                  <div className="selection-indicator">
-                    Imprimir
-                  </div>
+                  <div className="selection-indicator">Imprimir</div>
                 </div>
               </div>
             </div>
@@ -153,17 +158,19 @@ const PhotoSelectionScreen = () => {
         </div>
 
         <div className="action-buttons">
-          <button 
-            className="start-over-button"
-            onClick={handleStartOver}
-          >
+          <button className="start-over-button" onClick={handleStartOver}>
             Começar Novamente
           </button>
         </div>
 
         <div className="style-info">
-          <p>Estilo selecionado: <strong>{selectionData.style}</strong></p>
-          <p>Gênero: <strong>{selectionData.gender}</strong></p>
+          <p>
+            Estilo selecionado: <strong>{selectionData.style}</strong>
+          </p>
+          <p>
+            Gênero:{' '}
+            <strong>{selectionData.gender ? selectionData.gender : '—'}</strong>
+          </p>
         </div>
       </div>
 
@@ -174,25 +181,19 @@ const PhotoSelectionScreen = () => {
             <div className="print-modal-header">
               <h3>Deseja salvar esta foto?</h3>
             </div>
-            
+
             <div className="print-modal-body">
               <div className="print-preview">
                 <img src={selectedPhoto.url} alt="Foto selecionada" />
               </div>
               <p>Esta foto será enviada para impressão.</p>
             </div>
-            
+
             <div className="print-modal-buttons">
-              <button 
-                className="print-cancel-button"
-                onClick={handlePrintCancel}
-              >
+              <button className="print-cancel-button" onClick={handlePrintCancel}>
                 Cancelar
               </button>
-              <button 
-                className="print-confirm-button"
-                onClick={handlePrintConfirm}
-              >
+              <button className="print-confirm-button" onClick={handlePrintConfirm}>
                 Continuar
               </button>
             </div>
@@ -204,3 +205,4 @@ const PhotoSelectionScreen = () => {
 };
 
 export default PhotoSelectionScreen;
+
