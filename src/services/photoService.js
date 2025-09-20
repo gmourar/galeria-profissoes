@@ -465,6 +465,108 @@ export const checkProgress = async (taskId) => {
 };
 
 /**
+ * Aplica moldura com logo a uma imagem
+ * @param {string} imageUrl - URL da imagem original
+ * @returns {Promise<string>} - URL da imagem com moldura
+ */
+export const applyFrameToImage = async (imageUrl) => {
+  try {
+    console.log('=== APLICANDO MOLDURA À IMAGEM ===');
+    console.log('Image URL:', imageUrl);
+    
+    // Cria um canvas para aplicar a moldura
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Carrega a imagem original
+    const originalImage = new Image();
+    originalImage.crossOrigin = 'anonymous';
+    
+    return new Promise((resolve, reject) => {
+      originalImage.onload = async () => {
+        try {
+          // Define o tamanho do canvas (mantém proporção)
+          const maxWidth = 800;
+          const maxHeight = 1200;
+          const aspectRatio = originalImage.width / originalImage.height;
+          
+          let canvasWidth, canvasHeight;
+          if (aspectRatio > maxWidth / maxHeight) {
+            canvasWidth = maxWidth;
+            canvasHeight = maxWidth / aspectRatio;
+          } else {
+            canvasHeight = maxHeight;
+            canvasWidth = maxHeight * aspectRatio;
+          }
+          
+          canvas.width = canvasWidth;
+          canvas.height = canvasHeight;
+          
+          // Desenha a imagem original
+          ctx.drawImage(originalImage, 0, 0, canvasWidth, canvasHeight);
+          
+          // Carrega o logo
+          const logoImage = new Image();
+          logoImage.crossOrigin = 'anonymous';
+          
+          logoImage.onload = () => {
+            try {
+              // Tamanho do logo (proporcional à imagem)
+              const logoSize = Math.min(canvasWidth, canvasHeight) * 0.08; // 8% da menor dimensão
+              const logoX = logoSize * 0.5; // Margem esquerda
+              const logoY = logoSize * 0.5; // Margem superior
+              
+              // Desenha fundo semi-transparente para o logo
+              ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+              ctx.fillRect(logoX - 5, logoY - 5, logoSize + 10, logoSize + 10);
+              
+              // Desenha o logo
+              ctx.drawImage(logoImage, logoX, logoY, logoSize, logoSize);
+              
+              // Converte para blob e cria URL
+              canvas.toBlob((blob) => {
+                const framedImageUrl = URL.createObjectURL(blob);
+                console.log('✅ Moldura aplicada com sucesso');
+                console.log('Nova URL:', framedImageUrl);
+                resolve(framedImageUrl);
+              }, 'image/jpeg', 0.9);
+              
+            } catch (error) {
+              console.error('❌ Erro ao aplicar logo:', error);
+              // Se der erro, retorna a imagem original
+              resolve(imageUrl);
+            }
+          };
+          
+          logoImage.onerror = () => {
+            console.warn('⚠️ Logo não carregado, usando imagem original');
+            resolve(imageUrl);
+          };
+          
+          // Tenta carregar o logo
+          logoImage.src = '/src/assets/villa11.png';
+          
+        } catch (error) {
+          console.error('❌ Erro ao processar imagem:', error);
+          resolve(imageUrl);
+        }
+      };
+      
+      originalImage.onerror = () => {
+        console.error('❌ Erro ao carregar imagem original');
+        reject(new Error('Erro ao carregar imagem'));
+      };
+      
+      originalImage.src = imageUrl;
+    });
+    
+  } catch (error) {
+    console.error('❌ ERRO AO APLICAR MOLDURA:', error);
+    return imageUrl; // Retorna a imagem original em caso de erro
+  }
+};
+
+/**
  * Salva a foto selecionada pela IA
  * @param {string} photoName - Nome da foto (ex: foto1, foto2, etc.)
  * @param {string} imageUrl - URL da imagem selecionada
@@ -477,6 +579,11 @@ export const saveSelectedPhoto = async (photoName, imageUrl) => {
     console.log('Image URL:', imageUrl);
     console.log('API_CONFIG.USE_MOCKS:', API_CONFIG.USE_MOCKS);
     
+    // Aplica moldura com logo à imagem antes de salvar
+    console.log('Aplicando moldura com logo...');
+    const framedImageUrl = await applyFrameToImage(imageUrl);
+    console.log('Imagem com moldura:', framedImageUrl);
+    
     // Se estiver com mocks ligados, simula a resposta
     if (API_CONFIG.USE_MOCKS) {
       console.log('Usando mocks para salvar foto selecionada');
@@ -487,7 +594,7 @@ export const saveSelectedPhoto = async (photoName, imageUrl) => {
         success: true,
         message: 'Foto salva com sucesso',
         photo_name: photoName,
-        image_url: imageUrl
+        image_url: framedImageUrl // Usa a imagem com moldura
       };
       
       return mockResponse;
@@ -500,9 +607,9 @@ export const saveSelectedPhoto = async (photoName, imageUrl) => {
     console.log('Método: POST');
     console.log('Headers: Content-Type: application/json');
     
-    // Prepara o body
+    // Prepara o body com a imagem que já tem moldura
     const requestBody = {
-      image_url: imageUrl
+      image_url: framedImageUrl
     };
     
     console.log('=== BODY DA REQUISIÇÃO ===');

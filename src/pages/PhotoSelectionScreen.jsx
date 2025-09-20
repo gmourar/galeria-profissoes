@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { saveSelectedPhoto } from '../services/photoService';
+import { saveSelectedPhoto, applyFrameToImage } from '../services/photoService';
 import '../styles/PhotoSelectionScreen.css';
 
 const PhotoSelectionScreen = () => {
@@ -69,13 +69,18 @@ const PhotoSelectionScreen = () => {
           imageUrl: selectedPhoto.url
         });
         
-        // Chama a API para salvar a foto selecionada
+        // Aplica moldura com logo e salva a foto
         const result = await saveSelectedPhoto(photoName, selectedPhoto.url);
         
         console.log('Resposta da API:', result);
         
         // Salva a foto selecionada no localStorage para a tela de impressão
-        localStorage.setItem('selectedPhoto', JSON.stringify(selectedPhoto));
+        // Inclui a URL da imagem com moldura se disponível
+        const photoWithFrame = {
+          ...selectedPhoto,
+          framedUrl: result.image_url || selectedPhoto.url
+        };
+        localStorage.setItem('selectedPhoto', JSON.stringify(photoWithFrame));
         
         // Navega para a tela de impressão
         navigate('/print');
@@ -122,6 +127,10 @@ const PhotoSelectionScreen = () => {
   return (
     <div className="photo-selection-screen">
       <div className="photo-container">
+        <div className="logo-container">
+          <img src="/src/assets/villa11.png" alt="Logo Villa" className="brand-logo" />
+        </div>
+        
         <div className="header">
           <h2>Suas fotos profissionais estão prontas!</h2>
           <p>Clique na foto que você mais gostou para imprimir:</p>
@@ -135,7 +144,12 @@ const PhotoSelectionScreen = () => {
               onClick={() => handlePhotoSelect(photo.id)}
             >
               <div className="photo-wrapper">
-                <img src={photo.url} alt={`Foto profissional ${photo.id}`} />
+                <div className="photo-frame">
+                  <div className="frame-logo">
+                    <img src="/src/assets/villa11.png" alt="Logo Villa" className="frame-logo-img" />
+                  </div>
+                  <img src={photo.url} alt={`Foto profissional ${photo.id}`} className="photo-image" />
+                </div>
                 <div className="photo-overlay">
                   <div className="selection-indicator">
                     Imprimir

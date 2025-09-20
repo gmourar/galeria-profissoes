@@ -267,3 +267,96 @@
     text-align: center;
   }
 }
+
+/* Modal de Timeout */
+.timeout-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.timeout-modal {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 30px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  border: 3px solid #000000;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.timeout-modal-content h3 {
+  color: #000000;
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0 0 15px 0;
+}
+
+.timeout-modal-content p {
+  color: #666666;
+  font-size: 16px;
+  margin: 0 0 25px 0;
+  line-height: 1.4;
+}
+
+.timeout-modal-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.timeout-button {
+  padding: 12px 20px;
+  border: 2px solid #000000;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 140px;
+}
+
+.timeout-button.continue {
+  background: #ffffff;
+  color: #000000;
+}
+
+.timeout-button.continue:hover {
+  background: #f0f0f0;
+  transform: translateY(-2px);
+}
+
+.timeout-button.retry {
+  background: #000000;
+  color: #ffffff;
+}
+
+.timeout-button.retry:hover {
+  background: #333333;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .timeout-modal {
+    padding: 20px;
+    max-width: 350px;
+  }
+  
+  .timeout-modal-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .timeout-button {
+    min-width: auto;
+    width: 100%;
+  }
+}

@@ -10,6 +10,17 @@
   color: #ffffff;
 }
 
+/* Logo da marca na câmera */
+.camera-logo-container {
+  margin-bottom: 2vh;
+  text-align: center;
+}
+
+.camera-logo {
+  max-height: 50px;
+  width: auto;
+}
+
 .camera-container {
   width: 100%;
   max-width: 50vh;

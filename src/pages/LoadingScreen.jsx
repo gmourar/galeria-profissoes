@@ -7,6 +7,8 @@ const LoadingScreen = () => {
   const [progress, setProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showTimeoutModal, setShowTimeoutModal] = useState(false);
+  const [timeoutCount, setTimeoutCount] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,6 +38,23 @@ const LoadingScreen = () => {
         if (response.progress !== undefined) {
           setProgress(response.progress);
           console.log('Progresso atualizado para:', response.progress + '%');
+          
+          // Reset timeout count se progresso mudou
+          if (response.progress > 0) {
+            setTimeoutCount(0);
+          } else {
+            // Incrementa contador se progresso está zerado
+            const newCount = timeoutCount + 1;
+            setTimeoutCount(newCount);
+            console.log('Progresso zerado, contador:', newCount);
+            
+            // Se progresso zerado por 15 segundos (7.5 verificações de 2s)
+            if (newCount >= 8) {
+              console.log('⚠️ TIMEOUT: Progresso zerado por 15+ segundos');
+              setShowTimeoutModal(true);
+              return;
+            }
+          }
           
           // Se chegou a 100% e tem URLs das imagens
           if (response.progress === 100 && response.image_urls) {
@@ -81,6 +100,20 @@ const LoadingScreen = () => {
 
   const getProgressColor = () => {
     return '#ffffff'; // Cor branca consistente com outras páginas
+  };
+
+  const handleRetryPhoto = () => {
+    // Limpa dados e volta para a câmera
+    localStorage.removeItem('aiTaskId');
+    localStorage.removeItem('generatedImages');
+    localStorage.removeItem('uploadedPhoto');
+    localStorage.removeItem('uploadedPhotoName');
+    navigate('/camera');
+  };
+
+  const handleContinueWaiting = () => {
+    setShowTimeoutModal(false);
+    setTimeoutCount(0); // Reset contador
   };
 
   if (error) {
@@ -135,6 +168,32 @@ const LoadingScreen = () => {
           </div>
         </div>
       </div>
+
+      {/* Modal de Timeout */}
+      {showTimeoutModal && (
+        <div className="timeout-modal-overlay">
+          <div className="timeout-modal">
+            <div className="timeout-modal-content">
+              <h3>Processamento demorado</h3>
+              <p>O processamento está demorando mais que o esperado. Deseja tirar uma nova foto?</p>
+              <div className="timeout-modal-buttons">
+                <button 
+                  className="timeout-button continue"
+                  onClick={handleContinueWaiting}
+                >
+                  Continuar Aguardando
+                </button>
+                <button 
+                  className="timeout-button retry"
+                  onClick={handleRetryPhoto}
+                >
+                  Tirar Nova Foto
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

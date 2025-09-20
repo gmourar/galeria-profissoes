@@ -222,6 +222,9 @@ const CameraScreen = () => {
 
   return (
     <div className="camera-screen">
+      <div className="camera-logo-container">
+        <img src="/src/assets/villa11.png" alt="Logo Villa" className="camera-logo" />
+      </div>
       <div className="camera-container">
         <div className="camera-preview">
           {photo ? (
