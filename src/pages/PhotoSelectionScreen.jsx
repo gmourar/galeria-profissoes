@@ -157,9 +157,6 @@ const PhotoSelectionScreen = () => {
 
         <div className="style-info">
           <p>
-            Estilo selecionado: <strong>{selectionData.style}</strong>
-          </p>
-          <p>
             Gênero:{' '}
             <strong>{selectionData.gender ? selectionData.gender : '—'}</strong>
           </p>
