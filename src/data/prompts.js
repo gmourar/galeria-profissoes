@@ -3,9 +3,9 @@ export const PROMPTS_DATA = {
   masculino: {
     AGRO: "An agricultural worker, in a wheat field analyzing the crop with a tablet, sunset weather, golden lighting --cref {photoUrl} --sref https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaAgroHomem.png --ar 9:16 --cw 50 --sw 50",
     
-    BEAUTY: "portrait of a beauty specialist inside a high-tech beauty lab, surrounded by floating skincare bottles and holographic product designs --cref {photoUrl} --sref https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaChemistryHomem.png --ar 9:16 --cw 25 sw 75"--,
+    BEAUTY: "portrait of a beauty specialist inside a high-tech beauty lab, surrounded by floating skincare bottles and holographic product designs --cref {photoUrl} --sref https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaChemistryHomem.png --ar 9:16 --cw 25 --sw 75",
     
-    CRYPTO: "portrait as a crypto investor inside a crypto warehouse, glowing blockchain chains in the air, bitcoins holograms, futuristic investment aesthetic, studio lighting --cref {photoUrl} --sref https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaCryptoHomem.png --ar 9:16",
+    CRYPTO: "portrait as a crypto investor inside a crypto warehouse, glowing blockchain chains in the air, bitcoins holograms, futuristic investment aesthetic --cref {photoUrl} --ar 9:16 ",
     
     ENTREPENEUR: "portrait as an entrepreneur CEO tech innovator standing inside a cybernetic innovation lab, floating holographic circuits screens --cref {photoUrl} --sref https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaEntrepreneurHomem.png --ar 9:16",
     
@@ -13,7 +13,7 @@ export const PROMPTS_DATA = {
     
     FINANCE: "Financial CEO, standing in front of coworkers at a modern fintech hub, surrounded by people with laptops screens with trading graphs, live charts, collaborative financial innovation space --cref {photoUrl} --sref https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaFinanceHomem.png --ar 9:16",
     
-    REAL_STATE: "as real state agent, portrait style picture, visible face, standing inside a futuristic real estate showroom, holographic skyscrapers floating around, glowing floor plans and maquetes in the air, high-tech corporate style--cref {photoUrl} --sref https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/ReferenciaRealEstateHomem.png --ar 9:16",
+    REAL_STATE: "as real state agent, portrait style picture, visible face, standing inside a futuristic real estate showroom, holographic skyscrapers floating around, glowing floor plans and maquetes in the air, high-tech corporate style --cref {photoUrl} --sref https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/ReferenciaRealEstateHomem.png --ar 9:16",
 
     TECH: "portrait of a tech innovator at a hackathon with other developers, open laptops everywhere, cables, coffee cups, neon signage in background, energetic software innovation mood --cref {photoUrl} --sref https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaTechHomem.png --ar 9:16",
   },
