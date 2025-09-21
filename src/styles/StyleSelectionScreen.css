@@ -19,7 +19,7 @@
   max-width: 90vh;
   width: 100%;
   border: 3px solid #000000;
-  max-height: 90vh;
+  max-height: 95vh;
   overflow-y: auto;
 }
 
@@ -49,7 +49,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 35vh;
+  min-height: 25vh;
   justify-content: center;
   aspect-ratio: 3/4;
   overflow: hidden;
@@ -70,7 +70,7 @@
 
 .style-image {
   width: 100%;
-  height: 85%;
+  height: 75%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -110,7 +110,7 @@
   text-align: center;
   padding: 1.5vh;
   flex-shrink: 0;
-  height: 15%;
+  height: 25%;
   display: flex;
   align-items: center;
   justify-content: center;
