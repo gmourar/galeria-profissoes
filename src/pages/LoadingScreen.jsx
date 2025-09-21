@@ -56,10 +56,10 @@ const LoadingScreen = () => {
             console.log('Tempo decorrido:', elapsedTime.toFixed(1), 'segundos');
             console.log('Tentativas com progresso zero:', newCount);
             
-            if (newCount >= 10 || elapsedTime >= 15) {
+            if (newCount >= 20 || elapsedTime >= 30) {
               console.log('⚠️ TIMEOUT DETECTADO:');
-              console.log('- Tentativas:', newCount, '(limite: 10)');
-              console.log('- Tempo:', elapsedTime.toFixed(1), 's (limite: 15s)');
+              console.log('- Tentativas:', newCount, '(limite: 20)');
+              console.log('- Tempo:', elapsedTime.toFixed(1), 's (limite: 30s)');
               
               // Mostra alerta de erro e volta para câmera
               alert('Erro: O processamento está demorando muito. Voltando para tirar uma nova foto.');
