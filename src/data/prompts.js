@@ -5,7 +5,7 @@ export const PROMPTS_DATA = {
     
     BEAUTY: "portrait of a beauty specialist inside a high-tech beauty lab, surrounded by floating skincare bottles and holographic product designs --cref {photoUrl} --sref https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaChemistryHomem.png --ar 9:16 --cw 25 --sw 75",
     
-    CRYPTO: "portrait as a crypto investor inside a crypto warehouse, glowing blockchain chains in the air, bitcoins holograms, futuristic investment aesthetic --cref {photoUrl} --ar 9:16 ",
+    CRYPTO: "a crypto investor inside a crypto warehouse, glowing blockchain chains in the air, bitcoins holograms, rows of bitcoin machines --cref {photoUrl} --sref https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/ReferenciaCryptoHomem.png --ar 9:16 ",
     
     ENTREPENEUR: "portrait as an entrepreneur CEO tech innovator standing inside a cybernetic innovation lab, floating holographic circuits screens --cref {photoUrl} --sref https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaEntrepreneurHomem.png --ar 9:16",
     
@@ -23,7 +23,7 @@ export const PROMPTS_DATA = {
     
     BEAUTY: "portrait of a beauty specialist inside a high-tech beauty lab, surrounded by floating skincare bottles and holographic product designs --cref {photoUrl} --sref https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaChemistryMulher.png --ar 9:16",
     
-    CRYPTO: "portrait as a crypto investor inside a crypto warehouse, glowing blockchain chains in the air, bitcoins holograms, futuristic investment aesthetic, studio lighting --cref {photoUrl} --sref https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/ReferenciaCryptoMulher.png --ar 9:16",
+    CRYPTO: "a crypto investor inside a crypto warehouse, glowing blockchain chains in the air, bitcoins holograms, rows of bitcoin machines --cref {photoUrl} --sref https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/ReferenciaCryptoMulher.png --ar 9:16",
     
     ENTREPENEUR: "portrait as an entrepreneur CEO tech innovator standing inside a cybernetic innovation lab, floating holographic circuits screens --cref {photoUrl} --sref https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaEntrepreneurMulher.png --ar 9:16",
     
