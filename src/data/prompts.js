@@ -3,7 +3,7 @@ export const PROMPTS_DATA = {
   masculino: {
     AGRO: "An agricultural worker, in a wheat field analyzing the crop with a tablet, sunset weather, golden lighting --cref {photoUrl} --sref https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaAgroHomem.png --ar 9:16 --cw 50 --sw 50",
     
-    BEAUTY: "portrait of a beauty specialist inside a high-tech beauty lab, surrounded by floating skincare bottles and holographic product designs --cref {photoUrl} --sref https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaChemistryHomem.png --ar 9:16",
+    BEAUTY: "portrait of a beauty specialist inside a high-tech beauty lab, surrounded by floating skincare bottles and holographic product designs --cref {photoUrl} --sref https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaChemistryHomem.png --ar 9:16 --cw 25 sw 75"--,
     
     CRYPTO: "portrait as a crypto investor inside a crypto warehouse, glowing blockchain chains in the air, bitcoins holograms, futuristic investment aesthetic, studio lighting --cref {photoUrl} --sref https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaCryptoHomem.png --ar 9:16",
     
@@ -11,7 +11,7 @@ export const PROMPTS_DATA = {
     
     FASHION: "a fashion designer in his high-tech atelier, clothing racks, fabrics, patterns, scattered through the atelier --cref {photoUrl} --sref https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/ReferenciaFashionHomem.png --ar 9:16 --cw 50 --sw 50",
     
-    FINANCE: "Financial CEO, standing in front of coworkers at a modern fintech hub, surrounded by people with laptops and a big screen with trading graphics, collaborative financial innovation space --cref {photoUrl} --sref https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaFinanceHomem.png --ar 9:16",
+    FINANCE: "Financial CEO, standing in front of coworkers at a modern fintech hub, surrounded by people with laptops screens with trading graphs, live charts, collaborative financial innovation space --cref {photoUrl} --sref https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaFinanceHomem.png --ar 9:16",
     
     REAL_STATE: "as real state agent, portrait style picture, visible face, standing inside a futuristic real estate showroom, holographic skyscrapers floating around, glowing floor plans and maquetes in the air, high-tech corporate style--cref {photoUrl} --sref https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/ReferenciaRealEstateHomem.png --ar 9:16",
 

@@ -49,7 +49,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 20vh;
+  min-height: 35vh;
   justify-content: center;
   aspect-ratio: 3/4;
   overflow: hidden;
@@ -70,7 +70,7 @@
 
 .style-image {
   width: 100%;
-  height: 70%;
+  height: 85%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -105,12 +105,12 @@
 }
 
 .style-name {
-  font-size: 2vh;
+  font-size: 2.5vh;
   font-weight: bold;
   text-align: center;
   padding: 1.5vh;
   flex-shrink: 0;
-  height: 30%;
+  height: 15%;
   display: flex;
   align-items: center;
   justify-content: center;
