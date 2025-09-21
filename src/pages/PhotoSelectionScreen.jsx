@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { saveSelectedPhotoWithFrame } from '../services/photoService';
+import { saveSelectedPhoto } from '../services/photoService';
 import '../styles/PhotoSelectionScreen.css';
 
 const PhotoSelectionScreen = () => {
@@ -59,26 +59,18 @@ const PhotoSelectionScreen = () => {
           photoName = 'foto1';
         }
 
-        console.log('Enviando para API (com moldura):', {
-          photoName,
-          imageUrl: selectedPhoto.url,
-        });
+         console.log('Enviando para API:', {
+           photoName,
+           imageUrl: selectedPhoto.url
+         });
 
-        // Aplica moldura em canvas -> faz upload -> salva e retorna URL pública
-        const response = await saveSelectedPhotoWithFrame(photoName, selectedPhoto.url, {
-          frameSrc: '/moldura.png', // coloque moldura em /public
-          // logoSrc: '/logo.png',  // opcional
-          quality: 0.92,
-        });
+         // Chama a API para salvar a foto selecionada
+         const result = await saveSelectedPhoto(photoName, selectedPhoto.url);
 
-        // Esperamos pelo menos { publicUrl } no retorno
-        console.log('Resposta da API (saveSelectedPhotoWithFrame):', response);
+         console.log('Resposta da API:', result);
 
-        const publicUrl = response?.publicUrl || selectedPhoto.url;
-
-        // Salva a foto selecionada JÁ COM MOLDURA para a próxima tela
-        const selectedWithFrame = { ...selectedPhoto, url: publicUrl };
-        localStorage.setItem('selectedPhoto', JSON.stringify(selectedWithFrame));
+         // Salva a foto selecionada no localStorage para a tela de impressão
+         localStorage.setItem('selectedPhoto', JSON.stringify(selectedPhoto));
 
         navigate('/print');
       } catch (error) {
