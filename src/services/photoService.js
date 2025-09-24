@@ -430,14 +430,14 @@ export const getStyleReferenceUrl = (profession, gender) => {
       feminino: 'https://cdn.midjourney.com/e95e5b2a-644b-4d71-86f5-4cb76a705941/0_0.png'
     }
   };
-  
+
   const professionKey = profession.toUpperCase();
   const genderKey = gender.toLowerCase();
-  
+
   if (styleReferences[professionKey] && styleReferences[professionKey][genderKey]) {
     return styleReferences[professionKey][genderKey];
   }
-  
+
   // Fallback para caso não encontre
   console.warn(`Referência de estilo não encontrada para ${profession} - ${gender}`);
   return styleReferences.AGRO[genderKey] || styleReferences.AGRO.masculino;
@@ -450,7 +450,7 @@ export const getStyleReferenceUrl = (profession, gender) => {
  */
 export const buildPhotoUrl = (photoName) => {
   // Constrói URL real da API
-  return `https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/${photoName}.png`;
+  return `https://foto-ai-picbrand-ns.s3.sa-east-1.amazonaws.com/${photoName}.png`;
 };
 
 /**
@@ -463,27 +463,27 @@ export const checkProgress = async (taskId) => {
     console.log('=== CHECK PROGRESS INICIADO ===');
     console.log('Task ID:', taskId);
     console.log('API_CONFIG.USE_MOCKS:', API_CONFIG.USE_MOCKS);
-    
+
     // Se estiver com mocks ligados, simula o progresso
     if (API_CONFIG.USE_MOCKS) {
       console.log('Usando mocks para verificação de progresso');
-      
+
       // Simula progresso incremental
       const currentProgress = parseInt(localStorage.getItem('mockProgress') || '0');
       let newProgress = currentProgress + Math.floor(Math.random() * 20) + 10;
-      
+
       if (newProgress > 100) newProgress = 100;
-      
+
       localStorage.setItem('mockProgress', newProgress.toString());
-      
+
       if (newProgress === 100) {
         // Simula URLs de imagens geradas baseadas na foto original
         const originalPhotoUrl = localStorage.getItem('uploadedPhotoUrl');
-        
+
         // Se temos a foto original, cria variações simuladas
         if (originalPhotoUrl) {
           console.log('Gerando imagens baseadas na foto original:', originalPhotoUrl);
-          
+
           // Simula 4 variações da foto original com diferentes estilos
           const mockImages = [
             originalPhotoUrl, // Variação 1: foto original
@@ -491,7 +491,7 @@ export const checkProgress = async (taskId) => {
             originalPhotoUrl, // Variação 3: mesma foto (simula processamento)
             originalPhotoUrl  // Variação 4: mesma foto (simula processamento)
           ];
-          
+
           return {
             progress: 100,
             image_urls: mockImages
@@ -504,14 +504,14 @@ export const checkProgress = async (taskId) => {
             `https://cdn.apiframe.pro/new-images/mock-${taskId}-3.png`,
             `https://cdn.apiframe.pro/new-images/mock-${taskId}-4.png`
           ];
-          
+
           return {
             progress: 100,
             image_urls: mockImages
           };
         }
       }
-      
+
       return { progress: newProgress };
     }
 
@@ -521,7 +521,7 @@ export const checkProgress = async (taskId) => {
     console.log('Método: GET');
     console.log('Headers: Content-Type: application/json');
     console.log('Body: NENHUM (requisição GET)');
-    
+
     // Debug: verifica se o taskId está correto
     console.log('=== DEBUG TASK ID ===');
     console.log('Task ID recebido:', taskId);
@@ -529,12 +529,12 @@ export const checkProgress = async (taskId) => {
     console.log('Task ID é string?', typeof taskId === 'string');
     console.log('Task ID tem tamanho:', taskId ? taskId.length : 'undefined');
     console.log('Task ID é válido?', taskId && taskId.length > 0);
-    
+
     // Verifica se o taskId é válido
     if (!taskId || typeof taskId !== 'string' || taskId.trim() === '') {
       throw new Error('Task ID inválido ou vazio');
     }
-    
+
     // Faz a requisição GET simples (sem body)
     const response = await fetch(progressUrl, {
       method: 'GET',
@@ -564,9 +564,9 @@ export const checkProgress = async (taskId) => {
     console.log('Progress é zero?', result.progress === 0);
     console.log('Progress é null?', result.progress === null);
     console.log('Progress é undefined?', result.progress === undefined);
-    
+
     return result;
-    
+
   } catch (error) {
     console.error('❌ ERRO AO VERIFICAR PROGRESSO:', error);
     console.error('Detalhes do erro:', error.message);
@@ -583,15 +583,15 @@ export const applyFrameToImage = async (imageUrl) => {
   try {
     console.log('=== APLICANDO MOLDURA À IMAGEM ===');
     console.log('Image URL:', imageUrl);
-    
+
     // Cria um canvas para aplicar a moldura
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-    
+
     // Carrega a imagem original
     const originalImage = new Image();
     originalImage.crossOrigin = 'anonymous';
-    
+
     return new Promise((resolve, reject) => {
       originalImage.onload = async () => {
         try {
@@ -599,7 +599,7 @@ export const applyFrameToImage = async (imageUrl) => {
           const maxWidth = 800;
           const maxHeight = 1200;
           const aspectRatio = originalImage.width / originalImage.height;
-          
+
           let canvasWidth, canvasHeight;
           if (aspectRatio > maxWidth / maxHeight) {
             canvasWidth = maxWidth;
@@ -608,31 +608,31 @@ export const applyFrameToImage = async (imageUrl) => {
             canvasHeight = maxHeight;
             canvasWidth = maxHeight * aspectRatio;
           }
-          
+
           canvas.width = canvasWidth;
           canvas.height = canvasHeight;
-          
+
           // Desenha a imagem original
           ctx.drawImage(originalImage, 0, 0, canvasWidth, canvasHeight);
-          
+
           // Carrega o logo
           const logoImage = new Image();
           logoImage.crossOrigin = 'anonymous';
-          
+
           logoImage.onload = () => {
             try {
               // Tamanho do logo (proporcional à imagem)
               const logoSize = Math.min(canvasWidth, canvasHeight) * 0.08; // 8% da menor dimensão
               const logoX = logoSize * 0.5; // Margem esquerda
               const logoY = logoSize * 0.5; // Margem superior
-              
+
               // Desenha fundo semi-transparente para o logo
               ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
               ctx.fillRect(logoX - 5, logoY - 5, logoSize + 10, logoSize + 10);
-              
+
               // Desenha o logo
               ctx.drawImage(logoImage, logoX, logoY, logoSize, logoSize);
-              
+
               // Converte para blob e cria URL
               canvas.toBlob((blob) => {
                 const framedImageUrl = URL.createObjectURL(blob);
@@ -640,36 +640,36 @@ export const applyFrameToImage = async (imageUrl) => {
                 console.log('Nova URL:', framedImageUrl);
                 resolve(framedImageUrl);
               }, 'image/jpeg', 0.9);
-              
+
             } catch (error) {
               console.error('❌ Erro ao aplicar logo:', error);
               // Se der erro, retorna a imagem original
               resolve(imageUrl);
             }
           };
-          
+
           logoImage.onerror = () => {
             console.warn('⚠️ Logo não carregado, usando imagem original');
             resolve(imageUrl);
           };
-          
+
           // Tenta carregar o logo
           logoImage.src = '/src/assets/villa11.png';
-          
+
         } catch (error) {
           console.error('❌ Erro ao processar imagem:', error);
           resolve(imageUrl);
         }
       };
-      
+
       originalImage.onerror = () => {
         console.error('❌ Erro ao carregar imagem original');
         reject(new Error('Erro ao carregar imagem'));
       };
-      
+
       originalImage.src = imageUrl;
     });
-    
+
   } catch (error) {
     console.error('❌ ERRO AO APLICAR MOLDURA:', error);
     return imageUrl; // Retorna a imagem original em caso de erro
@@ -704,75 +704,77 @@ const resolveTemaFromStyle = (styleId) => {
  * @returns {Promise<Object>} - Resposta da API
  */
 export const saveSelectedPhoto = async (photoName, imageUrl, meta = {}) => {
-  try {
-    console.log('=== SAVE SELECTED PHOTO INICIADO ===');
-    console.log('Photo Name:', photoName);
-    console.log('Image URL:', imageUrl);
-    console.log('API_CONFIG.USE_MOCKS:', API_CONFIG.USE_MOCKS);
+    try {
+        console.log('=== SAVE SELECTED PHOTO INICIADO ===');
+        console.log('Photo Name:', photoName);
+        console.log('Image URL:', imageUrl);
+        console.log('API_CONFIG.USE_MOCKS:', API_CONFIG.USE_MOCKS);
 
-    // Fallback: busca selectionData no localStorage caso não venha por parâmetro
-    const selectionData = JSON.parse(localStorage.getItem('selectionData') || '{}');
-    const gender = meta.gender || selectionData.gender || null;
-    const styleId = meta.style || selectionData.style || null;
-    const tema = resolveTemaFromStyle(styleId);
+        // Fallback: busca selectionData no localStorage caso não venha por parâmetro
+        const selectionData = JSON.parse(localStorage.getItem('selectionData') || '{}');
+        const gender = meta.gender || selectionData.gender || null;
+        const styleId = meta.style || selectionData.style || null;
+        const tema = resolveTemaFromStyle(styleId);
 
-    // Se estiver com mocks ligados, simula a resposta
-    if (API_CONFIG.USE_MOCKS) {
-      console.log('Usando mocks para salvar foto selecionada');
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      const mockResponse = {
-        success: true,
-        message: 'Foto salva com sucesso',
-        photo_name: photoName,
-        image_url: imageUrl,
-        gender,
-        tema,
-      };
-      return mockResponse;
+        // Se estiver com mocks ligados, simula a resposta
+        if (API_CONFIG.USE_MOCKS) {
+            console.log('Usando mocks para salvar foto selecionada');
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            const mockResponse = {
+                success: true,
+                message: 'Foto salva com sucesso',
+                photo_name: photoName,
+                image_url: imageUrl,
+                // Antes: gender,
+                genero: gender,
+                tema,
+            };
+            return mockResponse;
+        }
+
+        // URL completa do endpoint
+        const saveUrl = getApiUrl(`/photos/${photoName}/save-ia`);
+        console.log('=== FAZENDO POST PARA SAVE-IA ===');
+        console.log('URL completa:', saveUrl);
+        console.log('Método: POST');
+        console.log('Headers: Content-Type: application/json');
+
+        // Prepara o body com os campos exigidos
+        const requestBody = {
+            image_url: imageUrl,
+            // Antes: ...(gender ? { gender } : {}),
+            ...(gender ? { genero: gender } : {}),
+            ...(tema ? { tema } : {}),
+        };
+
+        console.log('=== BODY DA REQUISIÇÃO ===');
+        console.log('Body JSON:', JSON.stringify(requestBody));
+
+        const response = await fetch(saveUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestBody),
+        });
+
+        console.log('=== RESPOSTA DA API SAVE-IA ===');
+        console.log('Status:', response.status);
+        console.log('Status Text:', response.statusText);
+        console.log('OK:', response.ok);
+
+        if (!response.ok) {
+            throw new Error(`Erro ao salvar foto: ${response.status} ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        console.log('Resultado da API:', result);
+        return result;
+    } catch (error) {
+        console.error('❌ ERRO AO SALVAR FOTO SELECIONADA:', error);
+        console.error('Detalhes do erro:', error.message);
+        throw error;
     }
-
-    // URL completa do endpoint
-    const saveUrl = getApiUrl(`/photos/${photoName}/save-ia`);
-    console.log('=== FAZENDO POST PARA SAVE-IA ===');
-    console.log('URL completa:', saveUrl);
-    console.log('Método: POST');
-    console.log('Headers: Content-Type: application/json');
-
-    // Prepara o body com os campos exigidos
-    const requestBody = {
-      image_url: imageUrl,
-      ...(gender ? { gender } : {}),
-      ...(tema ? { tema } : {}),
-    };
-
-    console.log('=== BODY DA REQUISIÇÃO ===');
-    console.log('Body JSON:', JSON.stringify(requestBody));
-
-    const response = await fetch(saveUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(requestBody),
-    });
-
-    console.log('=== RESPOSTA DA API SAVE-IA ===');
-    console.log('Status:', response.status);
-    console.log('Status Text:', response.statusText);
-    console.log('OK:', response.ok);
-
-    if (!response.ok) {
-      throw new Error(`Erro ao salvar foto: ${response.status} ${response.statusText}`);
-    }
-
-    const result = await response.json();
-    console.log('Resultado da API:', result);
-    return result;
-  } catch (error) {
-    console.error('❌ ERRO AO SALVAR FOTO SELECIONADA:', error);
-    console.error('Detalhes do erro:', error.message);
-    throw error;
-  }
 };
 
 /**
@@ -797,8 +799,8 @@ export const updatePhotoQuantity = async (photoName, quantidade) => {
       const mockResponse = {
         id: 1,
         nome: photoName,
-        original_url: `https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/${photoName}.png`,
-        ia_url: `https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/${photoName}IA.png`,
+        original_url: `https://foto-ai-picbrand-ns.s3.sa-east-1.amazonaws.com/${photoName}.png`,
+        ia_url: `https://foto-ai-picbrand-ns.s3.sa-east-1.amazonaws.com/${photoName}IA.png`,
         quantidade: quantidade,
         impressa: true
       };
@@ -843,7 +845,7 @@ export const updatePhotoQuantity = async (photoName, quantidade) => {
     return result;
     
   } catch (error) {
-    console.error('❌ ERRO AO ATUALIZAR QUANTIDADE:', error);
+    console.error(' ERRO AO ATUALIZAR QUANTIDADE:', error);
     console.error('Detalhes do erro:', error.message);
     throw error;
   }
