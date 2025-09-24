@@ -1,6 +1,6 @@
 .print-screen {
   min-height: 100vh;
-  background: #000000;
+  background: #009db7;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -16,7 +16,7 @@
   max-width: 500px;
   width: 100%;
   text-align: center;
-  border: 3px solid #000000;
+  border: 3px solid #009db7;
 }
 
 .print-header {
@@ -50,7 +50,7 @@
   object-fit: cover;
   border-radius: 15px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-  border: 3px solid #000000;
+  border: 3px solid #009db7;
 }
 
 .quantity-selection {
@@ -85,7 +85,7 @@
 
 .quantity-select:focus {
   outline: none;
-  border-color: #000000;
+  border-color: #009db7;
   box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
 }
 
@@ -126,7 +126,7 @@
 }
 
 .print-button {
-  background: #000000;
+  background: #009db7;
   color: white;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
@@ -174,7 +174,7 @@
 
 .progress-fill {
   height: 100%;
-  background: #000000;
+  background: #009db7;
   border-radius: 4px;
   transition: width 0.3s ease;
 }
@@ -182,7 +182,7 @@
 .progress-percentage {
   font-size: 1.2rem;
   font-weight: 600;
-  color: #000000;
+  color: #009db7;
   margin-top: 10px;
 }
 
@@ -214,7 +214,7 @@
 }
 
 .qrcode-info h3 {
-  color: #000000;
+  color: #009db7;
   font-size: 1.8rem;
   margin-bottom: 10px;
   font-weight: 600;
@@ -233,7 +233,7 @@
   padding: 20px;
   background: #f8f9fa;
   border-radius: 15px;
-  border: 2px solid #000000;
+  border: 2px solid #009db7;
 }
 
 .qrcode-image {

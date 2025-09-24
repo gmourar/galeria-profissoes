@@ -4,6 +4,19 @@ import { AVAILABLE_STYLES, getPrompt } from '../data/prompts';
 import { generatePhotoWithAI, getStyleReferenceUrl, buildPhotoUrl, resetMockProgress } from '../services/photoService';
 import '../styles/StyleSelectionScreen.css';
 
+// Mapa de IDs de estilo para as novas pastas em /assets
+const ASSET_FOLDER_MAP = {
+  CLAY_OFFICE: 'CLAY OFFICE',
+  CORRETOR_FUTURO: 'CORRETOR DO FUTURO',
+  HOLOGRAMAS_SEGUROS: 'HOLOGRAMA DE SEGUROS',
+  LIVRARIA_SEGUROS: 'LIVRARIA DE SEGUROS',
+  PALESTRANDO: 'PALESTRANDO',
+  PODERES: 'PODERES',
+  SALA_FUTURO: 'SALA DO FUTURO',
+  SALA_PIXAR: 'SALA PIXAR',
+  SEGUROS_ONLINE: 'SEGUROS ONLINE',
+};
+
 const StyleSelectionScreen = () => {
   const [selectedStyle, setSelectedStyle] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -25,7 +38,7 @@ const StyleSelectionScreen = () => {
       console.log('Dados insuficientes, redirecionando para câmera');
       navigate('/camera');
     } else {
-      console.log('Dados OK, exibindo tela de seleção de profissões');
+      console.log('Dados OK, exibindo tela de seleção de estilos');
     }
   }, [navigate]);
 
@@ -112,13 +125,13 @@ const StyleSelectionScreen = () => {
   return (
     <div className="style-selection-screen">
       <div className="style-container">
-        <h2>Escolha o estilo da sua foto profissional:</h2>
+        <h2>Escolha o estilo da sua foto:</h2>
         
         <div className="styles-grid">
           {AVAILABLE_STYLES.map((style) => {
             const genderCode = selectedGender === 'masculino' ? 'MASC' : 'FEM';
-            const professionFolder = style.id === 'REAL_STATE' ? 'REAL ESTATE' : style.id;
-            const imagePath = `/src/assets/${professionFolder}/${genderCode}.png`;
+            const professionFolder = ASSET_FOLDER_MAP[style.id] || style.id;
+            const imagePath = new URL(`../assets/${professionFolder}/${genderCode}.png`, import.meta.url).href;
             
             return (
               <button
@@ -152,7 +165,7 @@ const StyleSelectionScreen = () => {
               <div className="spinner"></div>
             </div>
             <div className="progress-info">
-              <h3>Gerando suas fotos profissionais...</h3>
+              <h3>Gerando suas fotos...</h3>
               <p>Isso pode levar alguns minutos</p>
             </div>
             <div className="progress-bar">
@@ -169,7 +182,7 @@ const StyleSelectionScreen = () => {
             disabled={!selectedStyle}
             onClick={handleConfirm}
           >
-            Gerar Fotos Profissionais
+            Gerar Fotos
           </button>
         )}
       </div>

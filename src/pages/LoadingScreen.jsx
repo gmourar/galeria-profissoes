@@ -120,7 +120,7 @@ const LoadingScreen = () => {
   }, [navigate]);
 
   const getProgressColor = () => {
-    return '#ffffff'; // Cor branca consistente com outras páginas
+    return '#f4f1e1'; // Cor branca consistente com outras páginas
   };
 
 
@@ -157,7 +157,7 @@ const LoadingScreen = () => {
           </div>
           
           <div className="loading-text">
-            <h2>Gerando suas fotos profissionais</h2>
+            <h2>Gerando suas fotos...</h2>
           </div>
 
           <div className="progress-section">

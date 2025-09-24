@@ -167,7 +167,7 @@ export const applyFrameToImageBlob = async (imageUrl, opts = {}) => {
           // 4) borda por último para não ser coberta
           const border = Math.round(Math.min(w, h) * 0.02); // 2%
           ctx.lineWidth = border;
-          ctx.strokeStyle = '#ffffff';
+          ctx.strokeStyle = '#f4f1e1';
           ctx.strokeRect(border / 2, border / 2, w - border, h - border);
           finishToBlob();
         };
@@ -677,31 +677,57 @@ export const applyFrameToImage = async (imageUrl) => {
 };
 
 /**
+ * Mapa de IDs de estilos para os slugs exigidos pelo backend (tema)
+ */
+const TEMA_MAP = {
+  CLAY_OFFICE: 'clayoffice',
+  SALA_PIXAR: 'salapixar',
+  SALA_FUTURO: 'salafuturo',
+  PALESTRANDO: 'palestra',
+  LIVRARIA_SEGUROS: 'livariaseguros', // conforme especificado
+  CORRETOR_FUTURO: 'corretorfuturo',
+  PODERES: 'poderes',
+  SEGUROS_ONLINE: 'segurosonline',
+  HOLOGRAMAS_SEGUROS: 'hologramas',
+};
+
+const resolveTemaFromStyle = (styleId) => {
+  if (!styleId) return '';
+  return TEMA_MAP[styleId] || String(styleId).toLowerCase();
+};
+
+/**
  * Salva a foto selecionada pela IA
  * @param {string} photoName - Nome da foto (ex: foto1, foto2, etc.)
  * @param {string} imageUrl - URL da imagem selecionada
+ * @param {{gender?: string, style?: string}} [meta] - Dados adicionais: gênero e style ID
  * @returns {Promise<Object>} - Resposta da API
  */
-export const saveSelectedPhoto = async (photoName, imageUrl) => {
+export const saveSelectedPhoto = async (photoName, imageUrl, meta = {}) => {
   try {
     console.log('=== SAVE SELECTED PHOTO INICIADO ===');
     console.log('Photo Name:', photoName);
     console.log('Image URL:', imageUrl);
     console.log('API_CONFIG.USE_MOCKS:', API_CONFIG.USE_MOCKS);
-    
+
+    // Fallback: busca selectionData no localStorage caso não venha por parâmetro
+    const selectionData = JSON.parse(localStorage.getItem('selectionData') || '{}');
+    const gender = meta.gender || selectionData.gender || null;
+    const styleId = meta.style || selectionData.style || null;
+    const tema = resolveTemaFromStyle(styleId);
+
     // Se estiver com mocks ligados, simula a resposta
     if (API_CONFIG.USE_MOCKS) {
       console.log('Usando mocks para salvar foto selecionada');
-      // Simula delay da API
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       const mockResponse = {
         success: true,
         message: 'Foto salva com sucesso',
         photo_name: photoName,
-        image_url: imageUrl
+        image_url: imageUrl,
+        gender,
+        tema,
       };
-      
       return mockResponse;
     }
 
@@ -711,21 +737,23 @@ export const saveSelectedPhoto = async (photoName, imageUrl) => {
     console.log('URL completa:', saveUrl);
     console.log('Método: POST');
     console.log('Headers: Content-Type: application/json');
-    
-    // Prepara o body
+
+    // Prepara o body com os campos exigidos
     const requestBody = {
-      image_url: imageUrl
+      image_url: imageUrl,
+      ...(gender ? { gender } : {}),
+      ...(tema ? { tema } : {}),
     };
-    
+
     console.log('=== BODY DA REQUISIÇÃO ===');
     console.log('Body JSON:', JSON.stringify(requestBody));
 
     const response = await fetch(saveUrl, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(requestBody)
+      body: JSON.stringify(requestBody),
     });
 
     console.log('=== RESPOSTA DA API SAVE-IA ===');
@@ -740,7 +768,6 @@ export const saveSelectedPhoto = async (photoName, imageUrl) => {
     const result = await response.json();
     console.log('Resultado da API:', result);
     return result;
-    
   } catch (error) {
     console.error('❌ ERRO AO SALVAR FOTO SELECIONADA:', error);
     console.error('Detalhes do erro:', error.message);

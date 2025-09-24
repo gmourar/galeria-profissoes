@@ -8,22 +8,63 @@ const PrintScreen = () => {
   const [isPrinting, setIsPrinting] = useState(false);
   const [printProgress, setPrintProgress] = useState(0);
   const [qrCodeUrl, setQrCodeUrl] = useState('');
-  const [showQRCode, setShowQRCode] = useState(true);
+  const [iaImageUrl, setIaImageUrl] = useState('');
+  const [isLoadingImage, setIsLoadingImage] = useState(true);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   // Recupera dados do localStorage
-  const selectedPhoto = JSON.parse(localStorage.getItem('selectedPhoto') || '{}');
   const uploadedPhotoName = localStorage.getItem('uploadedPhotoName');
+  const savedIaUrl = localStorage.getItem('savedIaUrl'); // NOVO: Pega o ia_url salvo
 
   // Quantidade sempre será 1
   const selectedQuantity = 1;
 
-  // Gera QR code com o link da imagem selecionada
+  // MODIFICADO: Usa o ia_url salvo do localStorage em vez de fazer GET
   useEffect(() => {
-    if (selectedPhoto && selectedPhoto.url) {
-      generateQRCode(selectedPhoto.url);
-    }
-  }, [selectedPhoto]);
+    const loadSavedImage = async () => {
+      console.log('=== VERIFICANDO IA_URL NO LOCALSTORAGE ===');
+      console.log('savedIaUrl do localStorage:', savedIaUrl);
+      console.log('uploadedPhotoName do localStorage:', uploadedPhotoName);
+      
+      if (!savedIaUrl) {
+        console.error('ia_url não encontrado no localStorage');
+        console.log('Todas as chaves do localStorage:', Object.keys(localStorage));
+        setError('URL da imagem IA não encontrada. Você precisa selecionar uma foto primeiro.');
+        setIsLoadingImage(false);
+        return;
+      }
+
+      // Validação adicional da URL
+      if (!savedIaUrl.startsWith('http')) {
+        console.error('ia_url inválido:', savedIaUrl);
+        setError('URL da imagem IA inválida. Tente selecionar a foto novamente.');
+        setIsLoadingImage(false);
+        return;
+      }
+
+      try {
+        setIsLoadingImage(true);
+        console.log('Usando ia_url salvo do localStorage:', savedIaUrl);
+        
+        // Define a URL da imagem IA
+        setIaImageUrl(savedIaUrl);
+        
+        // Gera o QR code com a URL da IA salva
+        await generateQRCode(savedIaUrl);
+        
+        console.log('Processo concluído com sucesso');
+        
+      } catch (error) {
+        console.error('Erro ao carregar imagem salva:', error);
+        setError(error.message || 'Erro ao carregar a foto salva');
+      } finally {
+        setIsLoadingImage(false);
+      }
+    };
+
+    loadSavedImage();
+  }, [savedIaUrl]);
 
   const generateQRCode = async (imageUrl) => {
     try {
@@ -31,20 +72,21 @@ const PrintScreen = () => {
         width: 200,
         margin: 2,
         color: {
-          dark: '#000000',
-          light: '#FFFFFF'
+          dark: '#009db7',
+          light: '#f4f1e1'
         }
       });
       setQrCodeUrl(qrCodeDataURL);
+      console.log('QR Code gerado com sucesso para URL:', imageUrl);
     } catch (error) {
       console.error('Erro ao gerar QR code:', error);
+      setError('Erro ao gerar QR code');
     }
   };
 
-
   const handlePrint = async () => {
-    if (!selectedPhoto || !uploadedPhotoName) {
-      alert('Erro: Dados da foto não encontrados');
+    if (!uploadedPhotoName) {
+      alert('Erro: Nome da foto não encontrado');
       return;
     }
 
@@ -63,18 +105,15 @@ const PrintScreen = () => {
         });
       }, 500);
 
-      // Extrai o nome base da foto (ex: foto_1234567890.jpg -> foto1)
+      // Extrai o nome base da foto
       const photoBaseName = uploadedPhotoName.replace(/\.(jpg|jpeg|png)$/i, '');
-      // Se o nome já começa com "foto", usa diretamente, senão extrai o número
       let photoName;
       if (photoBaseName.startsWith('foto_')) {
         const photoNumber = photoBaseName.split('_').pop();
         photoName = `foto${photoNumber || '1'}`;
       } else if (photoBaseName.startsWith('foto')) {
-        // Se já é "foto" + número, usa diretamente
         photoName = photoBaseName;
       } else {
-        // Fallback para casos inesperados
         photoName = 'foto1';
       }
 
@@ -109,8 +148,7 @@ const PrintScreen = () => {
   };
 
   const handleBack = () => {
-    // Volta para a câmera (pessoa optou por não imprimir)
-    navigate('/camera');
+    navigate('/photo-selection');
   };
 
   const handleStartOver = () => {
@@ -125,20 +163,38 @@ const PrintScreen = () => {
     localStorage.removeItem('selectedPhoto');
     localStorage.removeItem('aiTaskId');
     localStorage.removeItem('mockProgress');
+    localStorage.removeItem('savedIaUrl'); // NOVO: Limpa também o ia_url salvo
     
-    // Volta para a câmera
     navigate('/camera');
   };
 
-  if (!selectedPhoto || !selectedPhoto.url) {
+  // Estados de loading e erro
+  if (isLoadingImage) {
+    return (
+      <div className="print-screen">
+        <div className="loading-container">
+          <h2>Carregando...</h2>
+          <p>Preparando sua foto salva...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !iaImageUrl) {
     return (
       <div className="print-screen">
         <div className="error-container">
           <h2>Erro</h2>
-          <p>Foto selecionada não encontrada</p>
-          <button onClick={handleBack} className="back-button">
-            Voltar
-          </button>
+          <p>{error || 'Foto não encontrada'}</p>
+          <p>Você precisa selecionar uma foto primeiro.</p>
+          <div className="error-buttons">
+            <button onClick={handleBack} className="back-button">
+              Voltar para Seleção
+            </button>
+            <button onClick={handleStartOver} className="start-over-button">
+              Começar Novamente
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -149,11 +205,11 @@ const PrintScreen = () => {
       <div className="print-container">
         <div className="print-header">
           <h2>Configurar Impressão</h2>
-          <p>Pronto para imprimir sua foto profissional</p>
+          <p>Pronto para imprimir sua foto</p>
         </div>
 
         <div className="photo-preview">
-          <img src={selectedPhoto.url} alt="Foto selecionada" className="selected-photo" />
+          <img src={iaImageUrl} alt="Foto selecionada" className="selected-photo" />
         </div>
 
         {isPrinting ? (
