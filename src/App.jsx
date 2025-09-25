@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import SplashScreen from './pages/SplashScreen';
 import CameraScreen from './pages/CameraScreen';
 import GenderSelectionScreen from './pages/GenderSelectionScreen';
 import StyleSelectionScreen from './pages/StyleSelectionScreen';
@@ -12,7 +13,7 @@ function App() {
     <Router>
       <div className="App">
         <Routes>
-          <Route path="/" element={<Navigate to="/camera" replace />} />
+          <Route path="/" element={<SplashScreen />} />
           <Route path="/camera" element={<CameraScreen />} />
           <Route path="/gender-selection" element={<GenderSelectionScreen />} />
           <Route path="/style-selection" element={<StyleSelectionScreen />} />

@@ -122,7 +122,7 @@ const PhotoSelectionScreen = () => {
     localStorage.removeItem('mockProgress');
     localStorage.removeItem('savedIaUrl'); // também limpa a URL salva
 
-    navigate('/camera');
+    navigate('/');
   };
 
   if (!selectionData || generatedPhotos.length === 0) {

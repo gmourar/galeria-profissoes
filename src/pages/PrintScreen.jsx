@@ -140,7 +140,7 @@ const PrintScreen = () => {
   };
 
   const handleBack = () => {
-    navigate('/camera');
+    navigate('/');
   };
 
   const handleStartOver = () => {
@@ -157,7 +157,7 @@ const PrintScreen = () => {
     localStorage.removeItem('mockProgress');
     localStorage.removeItem('savedIaUrl'); // NOVO: Limpa também o ia_url salvo
     
-    navigate('/camera');
+    navigate('/');
   };
 
   // Estados de loading e erro
