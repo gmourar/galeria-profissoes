@@ -130,14 +130,6 @@ const PrintScreen = () => {
 
       console.log('Resposta da API:', result);
 
-      // Verifica se a impressão foi concluída
-      if (result.impressa) {
-        alert('Impressão concluída com sucesso!');
-        navigate('/camera');
-      } else {
-        alert('Impressão iniciada com sucesso!');
-        navigate('/camera');
-      }
 
     } catch (error) {
       console.error('Erro ao imprimir foto:', error);
@@ -148,7 +140,7 @@ const PrintScreen = () => {
   };
 
   const handleBack = () => {
-    navigate('/photo-selection');
+    navigate('/camera');
   };
 
   const handleStartOver = () => {
@@ -204,8 +196,7 @@ const PrintScreen = () => {
     <div className="print-screen">
       <div className="print-container">
         <div className="print-header">
-          <h2>Configurar Impressão</h2>
-          <p>Pronto para imprimir sua foto</p>
+          <h2>Sua foto está pronta!</h2>
         </div>
 
         <div className="photo-preview">
@@ -215,8 +206,8 @@ const PrintScreen = () => {
         {isPrinting ? (
           <div className="printing-section">
             <div className="printing-info">
-              <h3>Imprimindo suas fotos...</h3>
-              <p>Por favor, aguarde enquanto processamos sua impressão</p>
+              <h3>salvando suas fotos...</h3>
+              <p>Por favor, aguarde enquanto processamos o salvamento da imagem</p>
             </div>
             <div className="progress-bar">
               <div 
@@ -251,7 +242,7 @@ const PrintScreen = () => {
                 onClick={handlePrint}
                 disabled={isPrinting}
               >
-                Imprimir 1 cópia
+                Salvar
               </button>
             </div>
           </div>

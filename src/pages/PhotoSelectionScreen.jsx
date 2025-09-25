@@ -138,13 +138,9 @@ const PhotoSelectionScreen = () => {
   return (
     <div className="photo-selection-screen">
       <div className="photo-container">
-        <div className="logo-container">
-          <img src="/villa11.png" alt="Logo Villa" className="brand-logo" />
-        </div>
-
         <div className="header">
           <h2>Suas fotos estão prontas!</h2>
-          <p>Clique na foto que você mais gostou para imprimir:</p>
+          <p>Clique na foto que você mais gostou para salvar:</p>
         </div>
 
         <div className="photos-grid">
@@ -176,12 +172,6 @@ const PhotoSelectionScreen = () => {
           </button>
         </div>
 
-        <div className="style-info">
-          <p>
-            Gênero:{' '}
-            <strong>{selectionData.gender ? selectionData.gender : '—'}</strong>
-          </p>
-        </div>
       </div>
 
       {/* Modal de Confirmação */}
@@ -196,7 +186,7 @@ const PhotoSelectionScreen = () => {
               <div className="print-preview">
                 <img src={selectedPhoto.url} alt="Foto selecionada" />
               </div>
-              <p>Esta foto será salva e preparada para impressão.</p>
+              <p>Deseja continuar com esta foto?</p>
               {isSaving && <p><strong>Salvando foto...</strong></p>}
             </div>
 

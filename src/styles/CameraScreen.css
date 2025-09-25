@@ -181,6 +181,12 @@
   gap: 3vh;
 }
 
+.modal-buttons-retake {
+    display: flex;
+    flex-direction: column;
+
+}
+
 .retake-button,
 .continue-button {
   padding: 2vh 4vh;
@@ -194,8 +200,8 @@
 }
 
 .retake-button {
-  background: #009db7;
-  color: #f4f1e1;
+  background: #f4f1e1;
+  color: #009db7;
 }
 
 .continue-button {
@@ -203,18 +209,23 @@
   color: #009db7;
 }
 
-.retake-button:hover,
+.retake-button:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
 .continue-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 .retake-button:hover {
-  background: #333333;
+  background: #009db7;
+    color: #f4f1e1;
+    border-color: #f4f1e1;
 }
 
 .continue-button:hover {
-  background: #f0f0f0;
+  background: #009db7;
 }
 
 .retake-button:disabled,
