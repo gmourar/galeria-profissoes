@@ -231,18 +231,11 @@ const PrintScreen = () => {
             </div>
             <div className="action-buttons">
               <button 
-                className="back-button"
+                className="print-button"
                 onClick={handleBack}
                 disabled={isPrinting}
               >
-                Voltar
-              </button>
-              <button 
-                className="print-button"
-                onClick={handlePrint}
-                disabled={isPrinting}
-              >
-                Salvar
+                Confirmar
               </button>
             </div>
           </div>
