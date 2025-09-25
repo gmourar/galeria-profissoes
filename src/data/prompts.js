@@ -14,7 +14,7 @@ export const PROMPTS_DATA = {
 
         PODERES: "portrait of an insurance broker holding a ball with symbols of a hospital, family, plane, money, house and car all in his palm like it is his superpowers --cref {photoUrl} --sref https://foto-ai-picbrand-ns.s3.sa-east-1.amazonaws.com/referenciaPoderesHomem.png --ar 9:16 --iw 2",
 
-        SALA_FUTURO: "an insurance instructor lecturing amid holographic insurance modules, neon-blue lecture hall with students and floating insurance priorities, insurance lists, insurance symbols, insurance panels --cref {photoUrl} --sref https://foto-ai-picbrand-ns.s3.sa-east-1.amazonaws.com/referenciaSalaFuturoHomem.png --ar 9:16 --iw 2",
+        SALA_FUTURO: "a man insurance instructor lecturing amid holographic insurance modules, neon-blue lecture hall with students and floating insurance priorities, insurance lists, insurance symbols, insurance panels, highly accurate likeness, true resemblance, natural beauty, no exaggeration, realistic lighting --cref {photoUrl} --sref https://foto-ai-picbrand-ns.s3.sa-east-1.amazonaws.com/referenciaSalaFuturoHomem.png --ar 9:16 --iw 2",
 
         SALA_PIXAR: "as an insurance teacher in Pixar animation style, lecturing amid holographic insurance modules, neon-blue lecture hall with floating data panels, full classroom --cref {photoUrl} --sref https://foto-ai-picbrand-ns.s3.sa-east-1.amazonaws.com/referenciaSalaPixarHomem.png --ar 9:16 --iw 2",
 
@@ -35,7 +35,7 @@ export const PROMPTS_DATA = {
 
         PODERES: "portrait of an insurance broker holding a ball with symbols of a hospital, family, plane, money, house and car all in her palm like it is her superpowers --cref {photoUrl} --sref https://foto-ai-picbrand-ns.s3.sa-east-1.amazonaws.com/referenciaPoderesMulher.png --ar 9:16 --iw 2",
 
-        SALA_FUTURO: "an insurance instructor lecturing amid holographic insurance modules, neon-blue lecture hall with students and floating insurance priorities, insurance lists, insurance symbols, insurance panels --cref {photoUrl} --sref https://foto-ai-picbrand-ns.s3.sa-east-1.amazonaws.com/referenciaSalaFuturoMulher.png --ar 9:16 --iw 2",
+        SALA_FUTURO: "an woman insurance instructor lecturing amid holographic insurance modules, neon-blue lecture hall with students and floating insurance priorities, insurance lists, insurance symbols, insurance panels, highly accurate likeness, true resemblance, natural beauty, no exaggeration, realistic lighting --cref {photoUrl} --sref https://foto-ai-picbrand-ns.s3.sa-east-1.amazonaws.com/referenciaSalaFuturoMulher.png --ar 9:16 --iw 2",
 
         SALA_PIXAR: "as an insurance teacher in Pixar animation style, lecturing amid holographic insurance modules, neon-blue lecture hall with floating data panels, full classroom --cref {photoUrl} --sref https://foto-ai-picbrand-ns.s3.sa-east-1.amazonaws.com/referenciaSalaPixarMulher.png --ar 9:16 --iw 2",
 
@@ -71,3 +71,6 @@ export const getPrompt = (gender, style, photoUrl) => {
 
     return promptTemplate.replace('{photoUrl}', photoUrl);
 };
+
+
+// highly accurate likeness, true resemblance, natural beauty, no exaggeration, realistic lighting
