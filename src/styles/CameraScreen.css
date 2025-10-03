@@ -4,7 +4,7 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: #009db7;
+  background: linear-gradient(90deg, #e42125 0%, #f29417 100%);
   padding: 2vh;
   font-family: 'Arial', sans-serif;
   color: #f4f1e1;
@@ -79,7 +79,7 @@
 
 .capture-button {
   background: #f4f1e1;
-  color: #009db7;
+  color: #e42125;
   border: 3px solid #f4f1e1;
   border-radius: 30px;
   padding: 2vh 6vh;
@@ -159,7 +159,7 @@
   max-width: 50vh;
   width: 90%;
   text-align: center;
-  border: 3px solid #009db7;
+  border: 3px solid #e42125;
 }
 
 .modal-photo-preview {
@@ -171,7 +171,7 @@
   max-width: 40vh;
   height: auto;
   border-radius: 15px;
-  border: 2px solid #009db7;
+  border: 2px solid #e42125;
   object-fit: cover;
 }
 
@@ -190,7 +190,7 @@
 .retake-button,
 .continue-button {
   padding: 2vh 4vh;
-  border: 3px solid #009db7;
+  border: 3px solid #e42125;
   border-radius: 30px;
   font-size: 2.5vh;
   font-weight: bold;
@@ -201,12 +201,12 @@
 
 .retake-button {
   background: #f4f1e1;
-  color: #009db7;
+  color: #e42125;
 }
 
 .continue-button {
   background: #f4f1e1;
-  color: #009db7;
+  color: #e42125;
 }
 
 .retake-button:hover{
@@ -219,13 +219,13 @@
 }
 
 .retake-button:hover {
-  background: #009db7;
+  background: linear-gradient(90deg, #e42125 0%, #f29417 100%);
     color: #f4f1e1;
     border-color: #f4f1e1;
 }
 
 .continue-button:hover {
-  background: #009db7;
+  background: linear-gradient(90deg, #e42125 0%, #f29417 100%);
 }
 
 .retake-button:disabled,
@@ -244,12 +244,12 @@
   background-color: #e0e0e0;
   border-radius: 10px;
   overflow: hidden;
-  border: 1px solid #009db7;
+  border: 1px solid #e42125;
 }
 
 .progress-fill {
   height: 100%;
-  background-color: #009db7;
+  background: linear-gradient(90deg, #e42125 0%, #f29417 100%);
   transition: width 0.3s ease;
   border-radius: 10px;
 }

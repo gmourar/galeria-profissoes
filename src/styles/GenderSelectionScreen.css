@@ -4,7 +4,7 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: #009db7;
+  background: linear-gradient(90deg, #e42125 0%, #f29417 100%);
   padding: 2vh;
   font-family: 'Arial', sans-serif;
   color: #f4f1e1;
@@ -18,11 +18,11 @@
   text-align: center;
   max-width: 60vh;
   width: 100%;
-  border: 3px solid #009db7;
+  border: 3px solid #e42125;
 }
 
 .gender-container h2 {
-  color: #009db7;
+  color: #e42125;
   margin-bottom: 4vh;
   font-size: 4vh;
   font-weight: bold;
@@ -37,14 +37,14 @@
 
 .gender-button {
   background: #f4f1e1;
-  border: 3px solid #009db7;
+  border: 3px solid #e42125;
   border-radius: 20px;
   padding: 3vh 5vh;
   font-size: 2.5vh;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
-  color: #009db7;
+  color: #e42125;
   min-width: 20vh;
 }
 
@@ -55,16 +55,16 @@
 }
 
 .gender-button.selected {
-  background: #009db7;
+  background: linear-gradient(90deg, #e42125 0%, #f29417 100%);
   color: #f4f1e1;
-  border-color: #009db7;
+  border-color: #e42125;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 .continue-button {
-  background: #009db7;
+  background: linear-gradient(90deg, #e42125 0%, #f29417 100%);
   color: #f4f1e1;
-  border: 3px solid #009db7;
+  border: 3px solid #e42125;
   border-radius: 30px;
   padding: 2vh 5vh;
   font-size: 2.5vh;

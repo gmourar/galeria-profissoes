@@ -72,7 +72,7 @@ const PrintScreen = () => {
         width: 200,
         margin: 2,
         color: {
-          dark: '#009db7',
+          dark: '#e42125',
           light: '#f4f1e1'
         }
       });

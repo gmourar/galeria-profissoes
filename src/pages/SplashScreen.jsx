@@ -6,7 +6,7 @@ const SplashScreen = () => {
   const navigate = useNavigate();
   const handleStart = () => navigate('/camera');
 
-  const videoSrc = new URL('../assets/ensplash.mp4', import.meta.url).href;
+  const videoSrc = new URL('../assets/cocacolasplash.mp4', import.meta.url).href;
 
   return (
     <div
