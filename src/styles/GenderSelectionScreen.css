@@ -21,21 +21,38 @@
   border: 3px solid #e42125;
 }
 
-.gender-container h2 {
+.main-title {
   color: #e42125;
-  margin-bottom: 4vh;
-  font-size: 4vh;
+  margin-bottom: 1.5vh;
+  margin-top: 0;
+  font-size: 5vh;
   font-weight: bold;
 }
 
-.gender-options {
+.gender-container h2 {
+  color: #e42125;
+  margin-bottom: 4vh;
+  font-size: 3.5vh;
+  font-weight: bold;
+}
+
+.gender-container h3 {
+  color: #e42125;
+  margin-bottom: 3vh;
+  font-size: 3vh;
+  font-weight: bold;
+}
+
+.gender-options,
+.age-options {
   display: flex;
   gap: 3vh;
   justify-content: center;
   margin-bottom: 4vh;
 }
 
-.gender-button {
+.gender-button,
+.age-button {
   background: #f4f1e1;
   border: 3px solid #e42125;
   border-radius: 20px;
@@ -48,13 +65,15 @@
   min-width: 20vh;
 }
 
-.gender-button:hover {
+.gender-button:hover,
+.age-button:hover {
   background: #f0f0f0;
   transform: translateY(-2px);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-.gender-button.selected {
+.gender-button.selected,
+.age-button.selected {
   background: linear-gradient(90deg, #e42125 0%, #f29417 100%);
   color: #f4f1e1;
   border-color: #e42125;
@@ -94,16 +113,26 @@
     max-width: 70vh;
   }
   
+  .main-title {
+    font-size: 4vh;
+  }
+  
   .gender-container h2 {
     font-size: 3vh;
   }
   
-  .gender-options {
+  .gender-container h3 {
+    font-size: 2.5vh;
+  }
+  
+  .gender-options,
+  .age-options {
     flex-direction: column;
     gap: 2vh;
   }
   
-  .gender-button {
+  .gender-button,
+  .age-button {
     min-width: auto;
     width: 100%;
     font-size: 2vh;
@@ -114,4 +143,5 @@
     font-size: 2vh;
     padding: 1.5vh 4vh;
   }
+
 }

@@ -4,7 +4,7 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: #009db7;
+  background: linear-gradient(90deg, #e42125 0%, #f29417 100%);
   padding: 2vh;
   font-family: 'Arial', sans-serif;
   color: #f4f1e1;
@@ -18,15 +18,25 @@
   text-align: center;
   max-width: 90vh;
   width: 100%;
-  border: 3px solid #009db7;
+  border: 3px solid #e42125;
   max-height: 95vh;
   overflow-y: auto;
 }
 
+/* Ocultar scrollbar mas manter funcionalidade */
+.style-container::-webkit-scrollbar {
+  display: none;
+}
+
+.style-container {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 .style-container h2 {
-  color: #009db7;
+  color: #e42125;
   margin-bottom: 3vh;
-  font-size: 2.5vh;
+  font-size: 3.5vh;
   font-weight: bold;
   line-height: 1.2;
 }
@@ -40,12 +50,12 @@
 
 .style-button {
   background: #f4f1e1;
-  border: 3px solid #009db7;
+  border: 3px solid #e42125;
   border-radius: 20px;
   padding: 0;
   cursor: pointer;
   transition: all 0.3s ease;
-  color: #009db7;
+  color: #e42125;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -62,9 +72,9 @@
 }
 
 .style-button.selected {
-  background: #009db7;
+  background: linear-gradient(90deg, #e42125 0%, #f29417 100%);
   color: #f4f1e1;
-  border-color: #009db7;
+  border-color: #e42125;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
@@ -117,9 +127,9 @@
 }
 
 .confirm-button {
-  background: #009db7;
+  background: linear-gradient(90deg, #e42125 0%, #f29417 100%);
   color: #f4f1e1;
-  border: 3px solid #009db7;
+  border: 3px solid #e42125;
   border-radius: 30px;
   padding: 2vh 5vh;
   font-size: 2.5vh;
@@ -150,7 +160,7 @@
   }
   
   .style-container h2 {
-    font-size: 2.5vh;
+    font-size: 3vh;
   }
   
   .styles-grid {
@@ -188,8 +198,8 @@
 }
 
 .progress-info h3 {
-  color: #009db7;
-  font-size: 2vh;
+  color: #e42125;
+  font-size: 2.5vh;
   margin-bottom: 1vh;
   font-weight: bold;
 }
@@ -211,14 +221,14 @@
 
 .progress-fill {
   height: 100%;
-  background: #009db7;
+  background: linear-gradient(90deg, #e42125 0%, #f29417 100%);
   border-radius: 10px;
   transition: width 0.3s ease;
 }
 
 .progress-percentage {
   text-align: center;
-  color: #009db7;
+  color: #e42125;
   font-size: 1.8vh;
   font-weight: bold;
 }
@@ -241,7 +251,7 @@
   width: 60px;
   height: 60px;
   border: 4px solid #f3f3f3;
-  border-top: 4px solid #009db7;
+  border-top: 4px solid #e42125;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 0 auto;
