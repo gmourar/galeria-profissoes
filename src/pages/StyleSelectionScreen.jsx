@@ -101,19 +101,21 @@ const StyleSelectionScreen = () => {
       console.log('Aspect Ratio: 9:16 (retrato)');
 
       // IMPORTANTE: Envia para o backend Runway
-      // O backend espera:
-      // - prompt: texto descritivo
-      // - s3Url: URL da FOTO DO USUÁRIO (tirada na câmera)
-      // - styleRefUrl: URL da IMAGEM DE REFERÊNCIA (estilo visual)
-      // - aspect_ratio: proporção da imagem
-
-      // NOTA: O backend precisa ser atualizado para aceitar styleRefUrl também!
-      // Por enquanto, vamos enviar apenas s3Url (foto do usuário)
-      // e o backend vai usar ela como referência
+      // O backend vai receber:
+      // 1. prompt: texto descritivo
+      // 2. s3Url: URL da FOTO DO USUÁRIO (tirada na câmera)
+      // 3. styleRefUrl: URL da IMAGEM DE REFERÊNCIA (estilo visual)
+      // 4. aspect_ratio: proporção da imagem
+      //
+      // O backend vai:
+      // - Baixar AMBAS as URLs
+      // - Converter para data URI
+      // - Enviar para Runway em reference_images: [foto_usuario, ref_estilo]
 
       const aiResponse = await generatePhotoWithAI(
         prompt,           // Texto descritivo
-        s3PhotoUrl,       // Foto do usuário
+        s3PhotoUrl,       // Foto do usuário (rosto/pessoa)
+        styleRefUrl,      // Referência de estilo (ambiente/cenário)
         '9:16'           // Aspect ratio
       );
 

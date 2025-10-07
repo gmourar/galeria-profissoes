@@ -197,25 +197,7 @@ export const buildPhotoUrl = (photoName) => {
   return `https://foto-ai-picbrand-ns.s3.sa-east-1.amazonaws.com/${photoName}.png`;
 };
 
-/**
- * Gera foto com IA usando Runway (novo backend)
- * @param {string} prompt - Prompt textual
- * @param {string} s3Url - URL pública da foto no S3 (usada como referência)
- * @param {string} aspectRatio - "1:1", "9:16" ou "16:9"
- * @returns {Promise<Object>} - Resposta com task_id
- */
-export const generatePhotoWithAI = async (prompt, s3Url, aspectRatio = '9:16') => {
-  try {
-    console.log('=== GENERATE PHOTO WITH AI (RUNWAY) INICIADO ===');
-    console.log('Prompt:', prompt);
-    console.log('S3 URL (referência):', s3Url);
-    console.log('Aspect Ratio:', aspectRatio);
-    console.log('API_CONFIG.USE_MOCKS:', API_CONFIG.USE_MOCKS);
-    
-    if (API_CONFIG.USE_MOCKS) {
-      console.log('Usando mocks para geração de IA');
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      const mockTaskId = `task_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       return { task_id: mockTaskId };
     }
 
