@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AVAILABLE_STYLES, getPrompt } from '../data/prompts';
-import { generatePhotoWithAI, getStyleReferenceUrl, buildPhotoUrl, resetMockProgress } from '../services/photoService';
+import { AVAILABLE_STYLES, getPrompt, getStyleReference } from '../data/prompts';
+import { generatePhotoWithAI, buildPhotoUrl, resetMockProgress } from '../services/photoService';
 import '../styles/StyleSelectionScreen.css';
 
-// Mapa de IDs de estilo para as novas pastas em /assets
+// Mapa de IDs de estilo para as pastas em /assets
 const ASSET_FOLDER_MAP = {
   CLAY_OFFICE: 'CLAY OFFICE',
   CORRETOR_FUTURO: 'CORRETOR DO FUTURO',
@@ -23,24 +23,19 @@ const StyleSelectionScreen = () => {
   const [generationProgress, setGenerationProgress] = useState(0);
   const navigate = useNavigate();
 
-  // Recupera dados do localStorage
   const uploadedPhotoData = JSON.parse(localStorage.getItem('uploadedPhoto') || '{}');
   const selectedGender = localStorage.getItem('selectedGender');
 
   useEffect(() => {
-    console.log('=== STYLE SELECTION SCREEN ===');
+    console.log('=== STYLE SELECTION SCREEN (RUNWAY) ===');
     console.log('uploadedPhotoData:', uploadedPhotoData);
     console.log('selectedGender:', selectedGender);
-    console.log('uploadedPhotoData.photoId:', uploadedPhotoData.photoId);
-    
-    // Se não há dados necessários, volta para a câmera
+
     if (!uploadedPhotoData.photoId || !selectedGender) {
       console.log('Dados insuficientes, redirecionando para câmera');
       navigate('/camera');
-    } else {
-      console.log('Dados OK, exibindo tela de seleção de estilos');
     }
-  }, [navigate]);
+  }, [navigate, uploadedPhotoData.photoId, selectedGender]);
 
   const handleStyleSelect = (styleId) => {
     setSelectedStyle(styleId);
@@ -53,30 +48,29 @@ const StyleSelectionScreen = () => {
 
     setIsGenerating(true);
     setGenerationProgress(0);
-    
-    // Reseta o progresso mock para nova geração
     resetMockProgress();
 
     try {
-      // Obtém o nome da foto salvo no localStorage
       const photoName = localStorage.getItem('uploadedPhotoName');
       if (!photoName) {
         throw new Error('Nome da foto não encontrado');
       }
 
-      // Constrói a URL da foto original
-      const photoUrl = buildPhotoUrl(photoName);
-      
-      // Obtém a URL da referência de estilo
-      const styleRef = getStyleReferenceUrl(selectedStyle, selectedGender);
+      // 1. Constrói a URL S3 da foto original (foto tirada na câmera)
+      const s3PhotoUrl = buildPhotoUrl(photoName);
 
-      // Obtém o prompt baseado no gênero e estilo
-      const prompt = getPrompt(
-        selectedGender,
-        selectedStyle,
-        photoUrl,
-        styleRef
-      );
+      // 2. Obtém o prompt textual (sem URLs)
+      const prompt = getPrompt(selectedGender, selectedStyle);
+
+      // 3. Obtém a URL da imagem de referência de estilo
+      const styleRefUrl = getStyleReference(selectedGender, selectedStyle);
+
+      console.log('=== DADOS PARA RUNWAY ===');
+      console.log('Foto do usuário (s3Url):', s3PhotoUrl);
+      console.log('Referência de estilo (styleRef):', styleRefUrl);
+      console.log('Prompt:', prompt);
+      console.log('Gender:', selectedGender);
+      console.log('Style:', selectedStyle);
 
       // Salva os dados da seleção
       const selectionData = {
@@ -84,8 +78,8 @@ const StyleSelectionScreen = () => {
         style: selectedStyle,
         prompt: prompt,
         originalPhoto: uploadedPhotoData,
-        photoUrl: photoUrl,
-        styleRef: styleRef
+        s3PhotoUrl: s3PhotoUrl,
+        styleRefUrl: styleRefUrl
       };
       localStorage.setItem('selectionData', JSON.stringify(selectionData));
 
@@ -100,22 +94,45 @@ const StyleSelectionScreen = () => {
         });
       }, 500);
 
-      // Envia prompt para o backend gerar as fotos
-      const aiResponse = await generatePhotoWithAI(prompt, photoUrl, styleRef);
-      
+      console.log('Enviando para Runway API...');
+      console.log('Prompt:', prompt);
+      console.log('Foto do usuário:', s3PhotoUrl);
+      console.log('Referência de estilo:', styleRefUrl);
+      console.log('Aspect Ratio: 9:16 (retrato)');
+
+      // IMPORTANTE: Envia para o backend Runway
+      // O backend espera:
+      // - prompt: texto descritivo
+      // - s3Url: URL da FOTO DO USUÁRIO (tirada na câmera)
+      // - styleRefUrl: URL da IMAGEM DE REFERÊNCIA (estilo visual)
+      // - aspect_ratio: proporção da imagem
+
+      // NOTA: O backend precisa ser atualizado para aceitar styleRefUrl também!
+      // Por enquanto, vamos enviar apenas s3Url (foto do usuário)
+      // e o backend vai usar ela como referência
+
+      const aiResponse = await generatePhotoWithAI(
+        prompt,           // Texto descritivo
+        s3PhotoUrl,       // Foto do usuário
+        '9:16'           // Aspect ratio
+      );
+
       clearInterval(progressInterval);
       setGenerationProgress(100);
 
-      // Salva a resposta da IA (task_id)
+      console.log('✅ Task ID recebido:', aiResponse.task_id);
+
+      // Salva o task_id para polling
       localStorage.setItem('aiTaskId', aiResponse.task_id);
 
       // Navega para a tela de loading
       setTimeout(() => {
+        console.log('Navegando para loading screen');
         navigate('/loading');
       }, 1000);
 
     } catch (error) {
-      console.error('Erro ao gerar fotos:', error);
+      console.error('❌ Erro ao gerar fotos:', error);
       setIsGenerating(false);
       setGenerationProgress(0);
       alert('Erro ao gerar fotos. Tente novamente.');
@@ -126,13 +143,13 @@ const StyleSelectionScreen = () => {
     <div className="style-selection-screen">
       <div className="style-container">
         <h2>Escolha o estilo da sua foto:</h2>
-        
+
         <div className="styles-grid">
           {AVAILABLE_STYLES.map((style) => {
             const genderCode = selectedGender === 'masculino' ? 'MASC' : 'FEM';
             const professionFolder = ASSET_FOLDER_MAP[style.id] || style.id;
             const imagePath = new URL(`../assets/${professionFolder}/${genderCode}.png`, import.meta.url).href;
-            
+
             return (
               <button
                 key={style.id}
@@ -141,8 +158,8 @@ const StyleSelectionScreen = () => {
                 disabled={isGenerating}
               >
                 <div className="style-image">
-                  <img 
-                    src={imagePath} 
+                  <img
+                    src={imagePath}
                     alt={`${style.name} - ${genderCode}`}
                     onError={(e) => {
                       e.target.style.display = 'none';
@@ -165,19 +182,19 @@ const StyleSelectionScreen = () => {
               <div className="spinner"></div>
             </div>
             <div className="progress-info">
-              <h3>Gerando suas fotos...</h3>
+              <h3>Gerando suas fotos com Runway...</h3>
               <p>Isso pode levar alguns minutos</p>
             </div>
             <div className="progress-bar">
-              <div 
-                className="progress-fill" 
+              <div
+                className="progress-fill"
                 style={{ width: `${generationProgress}%` }}
               ></div>
             </div>
             <div className="progress-percentage">{generationProgress}%</div>
           </div>
         ) : (
-          <button 
+          <button
             className="confirm-button"
             disabled={!selectedStyle}
             onClick={handleConfirm}
