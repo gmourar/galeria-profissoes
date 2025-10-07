@@ -1,8 +1,9 @@
-
-// Runway usa s3Url como referência de imagem
+// Estrutura de dados com prompts organizados por gênero e estilo
+// IMPORTANTE: Para Runway, removemos --cref, --sref, --ar e --iw (sintaxe do Midjourney)
+// O backend Runway usa s3Url como referência de imagem
 export const PROMPTS_DATA = {
     masculino: {
-        CLAY_OFFICE: "as an insurance broker in his work setup, office setting, closing a deal on the phone, claymation style, visible facial expression",
+        CLAY_OFFICE: "as a creative executive (preserve 100% of the face) in an advertising agency office, vibrant walls with motivational posters, laptops, brainstorming session atmosphere, semi-formal clothing, cinematic corporate photography",
 
         CORRETOR_FUTURO: "as an insurance broker, showing popular items on the table that surrounds the insurance market, like a house, car, health, education, family and travel as little toys in a futuristic high-tech office setting, showing what the company provides",
 
@@ -43,28 +44,29 @@ export const PROMPTS_DATA = {
 };
 
 // URLs de referência de estilo para cada prompt
+
 export const STYLE_REFERENCES = {
     masculino: {
-        CLAY_OFFICE: "https://foto-ai-picbrand-ns.s3.sa-east-1.amazonaws.com/referenciaClayOfficeHomem.png",
-        CORRETOR_FUTURO: "https://foto-ai-picbrand-ns.s3.sa-east-1.amazonaws.com/referenciaCorretorFuturoHomem.png",
-        HOLOGRAMAS_SEGUROS: "https://foto-ai-picbrand-ns.s3.sa-east-1.amazonaws.com/referenciaHologramasSegurosHomem.png",
-        LIVRARIA_SEGUROS: "https://foto-ai-picbrand-ns.s3.sa-east-1.amazonaws.com/referenciaLivrariaSegurosHomem.png",
-        PALESTRANDO: "https://foto-ai-picbrand-ns.s3.sa-east-1.amazonaws.com/referenciaPalestrandoHomem.png",
-        PODERES: "https://foto-ai-picbrand-ns.s3.sa-east-1.amazonaws.com/referenciaPoderesHomem.png",
-        SALA_FUTURO: "https://foto-ai-picbrand-ns.s3.sa-east-1.amazonaws.com/referenciaSalaFuturoHomem.png",
-        SALA_PIXAR: "https://foto-ai-picbrand-ns.s3.sa-east-1.amazonaws.com/referenciaSalaPixarHomem.png",
-        SEGUROS_ONLINE: "https://foto-ai-picbrand-ns.s3.sa-east-1.amazonaws.com/referenciaSegurosOnlineHomem.png"
+        CLAY_OFFICE: "https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/ReferenciaAgenciaHomem.png",
+        CORRETOR_FUTURO: "https://foto-ai-picbrand.s3.sa-east-1.amazonaws.com/referenciaCorretorFuturoHomem.png",
+        HOLOGRAMAS_SEGUROS: "https://foto-ai-picbrand.s3.sa-east-1.amazonaws.com/referenciaHologramasSegurosHomem.png",
+        LIVRARIA_SEGUROS: "https://foto-ai-picbrand.s3.sa-east-1.amazonaws.com/referenciaLivrariaSegurosHomem.png",
+        PALESTRANDO: "https://foto-ai-picbrand.s3.sa-east-1.amazonaws.com/referenciaPalestrandoHomem.png",
+        PODERES: "https://foto-ai-picbrand.s3.sa-east-1.amazonaws.com/referenciaPoderesHomem.png",
+        SALA_FUTURO: "https://foto-ai-picbrand.s3.sa-east-1.amazonaws.com/referenciaSalaFuturoHomem.png",
+        SALA_PIXAR: "https://foto-ai-picbrand.s3.sa-east-1.amazonaws.com/referenciaSalaPixarHomem.png",
+        SEGUROS_ONLINE: "https://foto-ai-picbrand.s3.sa-east-1.amazonaws.com/referenciaSegurosOnlineHomem.png"
     },
     feminino: {
-        CLAY_OFFICE: "https://foto-ai-picbrand-ns.s3.sa-east-1.amazonaws.com/referenciaClayOfficeMulher.png",
-        CORRETOR_FUTURO: "https://foto-ai-picbrand-ns.s3.sa-east-1.amazonaws.com/referenciaCorretorFuturoMulher.png",
-        HOLOGRAMAS_SEGUROS: "https://foto-ai-picbrand-ns.s3.sa-east-1.amazonaws.com/referenciaHologramasSegurosMulher.png",
-        LIVRARIA_SEGUROS: "https://foto-ai-picbrand-ns.s3.sa-east-1.amazonaws.com/referenciaLivrariaSegurosMulher.png",
-        PALESTRANDO: "https://foto-ai-picbrand-ns.s3.sa-east-1.amazonaws.com/referenciaPalestrandoMulher.png",
-        PODERES: "https://foto-ai-picbrand-ns.s3.sa-east-1.amazonaws.com/referenciaPoderesMulher.png",
-        SALA_FUTURO: "https://foto-ai-picbrand-ns.s3.sa-east-1.amazonaws.com/referenciaSalaFuturoMulher.png",
-        SALA_PIXAR: "https://foto-ai-picbrand-ns.s3.sa-east-1.amazonaws.com/referenciaSalaPixarMulher.png",
-        SEGUROS_ONLINE: "https://foto-ai-picbrand-ns.s3.sa-east-1.amazonaws.com/referenciaSegurosOnlineMulher.png"
+        CLAY_OFFICE: "https://foto-ai-picbrand.s3.sa-east-1.amazonaws.com/referenciaClayOfficeMulher.png",
+        CORRETOR_FUTURO: "https://foto-ai-picbrand.s3.sa-east-1.amazonaws.com/referenciaCorretorFuturoMulher.png",
+        HOLOGRAMAS_SEGUROS: "https://foto-ai-picbrand.s3.sa-east-1.amazonaws.com/referenciaHologramasSegurosMulher.png",
+        LIVRARIA_SEGUROS: "https://foto-ai-picbrand.s3.sa-east-1.amazonaws.com/referenciaLivrariaSegurosMulher.png",
+        PALESTRANDO: "https://foto-ai-picbrand.s3.sa-east-1.amazonaws.com/referenciaPalestrandoMulher.png",
+        PODERES: "https://foto-ai-picbrand.s3.sa-east-1.amazonaws.com/referenciaPoderesMulher.png",
+        SALA_FUTURO: "https://foto-ai-picbrand.s3.sa-east-1.amazonaws.com/referenciaSalaFuturoMulher.png",
+        SALA_PIXAR: "https://foto-ai-picbrand.s3.sa-east-1.amazonaws.com/referenciaSalaPixarMulher.png",
+        SEGUROS_ONLINE: "https://foto-ai-picbrand.s3.sa-east-1.amazonaws.com/referenciaSegurosOnlineMulher.png"
     }
 };
 

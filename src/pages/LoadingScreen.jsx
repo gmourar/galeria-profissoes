@@ -55,7 +55,7 @@ const LoadingScreen = () => {
             console.log('Tentativas com progresso zero:', newCount);
 
             // Runway pode demorar mais, então aumentamos os limites
-            if (newCount >= 30 || elapsedTime >= 60) {
+            if (newCount >= 80 || elapsedTime >= 170) {
               console.log('⚠️ TIMEOUT DETECTADO');
               console.log('- Tentativas:', newCount, '(limite: 30)');
               console.log('- Tempo:', elapsedTime.toFixed(1), 's (limite: 60s)');
@@ -98,8 +98,8 @@ const LoadingScreen = () => {
 
         // Se ainda não terminou, continua verificando
         if (response.progress < 100) {
-          console.log('Progresso < 100%, verificando novamente em 2 segundos...');
-          setTimeout(pollProgress, 2000);
+          console.log('Progresso < 100%, verificando novamente em 3.5 segundos...');
+          setTimeout(pollProgress, 3500);
         }
 
       } catch (err) {

@@ -1,14 +1,14 @@
 // Configuração da API - Atualizada para Runway Backend
 export const API_CONFIG = {
   // URL base da API
-  BASE_URL: 'http://127.0.0.1:8000',
+  BASE_URL: 'http://127.0.0.1:8010',
 
   // Endpoints do backend Runway
   ENDPOINTS: {
     UPLOAD_PHOTO: '/photos/upload',
-    GENERATE_PHOTOS: '/ai/generate', // POST: { prompt, s3Url, aspect_ratio }
-    GENERATE_UPLOAD: '/ai/generate-upload', // POST multipart: file, prompt, aspect_ratio
-    PROGRESS: '/ai/progress' // GET: /{task_id}
+    GENERATE_PHOTOS: '/generate', // POST: { prompt, s3Url, aspect_ratio }
+    GENERATE_UPLOAD: '/generate-upload', // POST multipart: file, prompt, aspect_ratio
+    PROGRESS: '/progress' // GET: /{task_id}
   },
 
   // Flag para uso de mocks durante desenvolvimento
@@ -24,7 +24,7 @@ console.log('=== FIM CONFIG ===');
 
 /**
  * Função para obter a URL completa do endpoint
- * @param {string} endpoint - Caminho do endpoint (ex: '/ai/generate' ou '/ai/progress/123')
+ * @param {string} endpoint - Caminho do endpoint (ex: '/generate' ou '/progress/123')
  * @returns {string} URL completa
  */
 export const getApiUrl = (endpoint) => {
