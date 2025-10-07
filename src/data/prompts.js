@@ -1,101 +1,120 @@
 // Estrutura de dados com prompts organizados por gênero e estilo
-// IMPORTANTE: Para Runway, removemos --cref, --sref, --ar e --iw (sintaxe do Midjourney)
-// O backend Runway usa s3Url como referência de imagem
 export const PROMPTS_DATA = {
     masculino: {
-        CLAY_OFFICE: "as a creative executive (preserve 100% of the face) in an advertising agency office, vibrant walls with motivational posters, laptops, brainstorming session atmosphere, semi-formal clothing, cinematic corporate photography",
+        AGENCIA: "as a creative executive (preserve 100% of the face) in an advertising agency office, vibrant walls with motivational posters, laptops, brainstorming session atmosphere, semi-formal clothing, cinematic corporate photography",
 
-        CORRETOR_FUTURO: "as an insurance broker, showing popular items on the table that surrounds the insurance market, like a house, car, health, education, family and travel as little toys in a futuristic high-tech office setting, showing what the company provides",
+        CLINICA_DE_ANIMAIS: "as a veterinarian in a modern animal clinic, surrounded by pets, medical equipment, caring atmosphere, professional attire, compassionate expression",
 
-        HOLOGRAMAS_SEGUROS: "as an insurance worker, standing on an insurance office where half the room is solid and half hologram, with products representing insurance products in holograms, money, cars, houses, family, health and travel",
+        CONSTRUCAO: "as a construction professional on a building site, wearing safety gear, hard hat, construction equipment in background, confident pose, industrial setting",
 
-        LIVRARIA_SEGUROS: "as a sophisticated and knowledgeable insurance provider inside a grand modern library of insurance knowledge, surrounded by floating books, holographic charts about risk and finance, elegant atmosphere, professional yet visionary, clear face",
+        COZINHA: "as a professional chef in a modern kitchen, cooking equipment, fresh ingredients, chef's uniform, dynamic culinary environment, professional kitchen atmosphere",
 
-        PALESTRANDO: "As an insurance host, on a stage lit insurance language, giving a keynote on the future of learning in insurance",
+        ESPORTE: "as an athlete in a modern sports facility, athletic wear, training equipment, energetic pose, professional sports environment, motivational atmosphere",
 
-        PODERES: "portrait of an insurance broker holding a ball with symbols of a hospital, family, plane, money, house and car all in his palm like it is his superpowers",
+        FABRICA: "as a factory supervisor in an industrial manufacturing facility, safety equipment, machinery in background, professional industrial setting, confident leadership pose",
 
-        SALA_FUTURO: "a man insurance instructor lecturing amid holographic insurance modules, neon-blue lecture hall with students and floating insurance priorities, insurance lists, insurance symbols, insurance panels, highly accurate likeness, true resemblance, natural beauty, no exaggeration, realistic lighting",
+        HOSPITAL: "as a healthcare professional in a modern hospital, medical attire, hospital equipment, caring expression, professional medical environment",
 
-        SALA_PIXAR: "as an insurance teacher in Pixar animation style, lecturing amid holographic insurance modules, neon-blue lecture hall with floating data panels, full classroom",
+        INFLUENCIADOR: "as a content creator in a modern studio setup, ring light, camera equipment, trendy casual clothing, engaging expression, social media aesthetic",
 
-        SEGUROS_ONLINE: "A laptop screen showing an insurance broker, normal casual business attire, selling health, family and house insurance, in the zoom meeting, office background"
+        LABORATORIO: "as a scientist in a modern laboratory, lab coat, scientific equipment, research materials, professional scientific environment, focused expression",
+
+        OFFICE: "as a business professional in a modern office, contemporary workspace, computer setup, business casual attire, professional corporate environment",
+
+        SALA_DE_AULA: "as an educator in a modern classroom, teaching materials, whiteboard or digital board, professional teaching attire, engaging with students atmosphere",
+
+        TECH: "as a tech professional in a modern tech workspace, multiple monitors, coding environment, casual tech attire, innovative atmosphere, digital equipment"
     },
 
     feminino: {
-        CLAY_OFFICE: "as an insurance broker in her work setup, office setting, closing a deal on the phone, claymation style, visible facial expression",
+        AGENCIA: "as a creative executive (preserve 100% of the face) in an advertising agency office, vibrant walls with motivational posters, laptops, brainstorming session atmosphere, semi-formal clothing, cinematic corporate photography",
 
-        CORRETOR_FUTURO: "as an insurance broker, showing popular items on the table that surrounds the insurance market, like a house, car, health, education, family and travel as little toys in a futuristic high-tech office setting, showing what the company provides",
+        CLINICA_DE_ANIMAIS: "as a veterinarian in a modern animal clinic, surrounded by pets, medical equipment, caring atmosphere, professional attire, compassionate expression",
 
-        HOLOGRAMAS_SEGUROS: "as an insurance worker, standing on an insurance office where half the room is solid and half hologram, with products representing insurance products in holograms, money, cars, houses, family, health and travel",
+        CONSTRUCAO: "as a construction professional on a building site, wearing safety gear, hard hat, construction equipment in background, confident pose, industrial setting",
 
-        LIVRARIA_SEGUROS: "as a sophisticated and knowledgeable insurance provider inside a grand modern library of insurance knowledge, surrounded by floating books, holographic charts about risk and finance, elegant atmosphere, professional yet visionary, clear face",
+        COZINHA: "as a professional chef in a modern kitchen, cooking equipment, fresh ingredients, chef's uniform, dynamic culinary environment, professional kitchen atmosphere",
 
-        PALESTRANDO: "As an insurance host, on a stage lit insurance language, giving a keynote on the future of learning in insurance",
+        ESPORTE: "as an athlete in a modern sports facility, athletic wear, training equipment, energetic pose, professional sports environment, motivational atmosphere",
 
-        PODERES: "portrait of an insurance broker holding a ball with symbols of a hospital, family, plane, money, house and car all in her palm like it is her superpowers",
+        FABRICA: "as a factory supervisor in an industrial manufacturing facility, safety equipment, machinery in background, professional industrial setting, confident leadership pose",
 
-        SALA_FUTURO: "an woman insurance instructor lecturing amid holographic insurance modules, neon-blue lecture hall with students and floating insurance priorities, insurance lists, insurance symbols, insurance panels, highly accurate likeness, true resemblance, natural beauty, no exaggeration, realistic lighting",
+        HOSPITAL: "as a healthcare professional in a modern hospital, medical attire, hospital equipment, caring expression, professional medical environment",
 
-        SALA_PIXAR: "as an insurance teacher in Pixar animation style, lecturing amid holographic insurance modules, neon-blue lecture hall with floating data panels, full classroom",
+        INFLUENCIADOR: "as a content creator in a modern studio setup, ring light, camera equipment, trendy casual clothing, engaging expression, social media aesthetic",
 
-        SEGUROS_ONLINE: "A laptop screen showing an insurance broker, normal casual business attire, selling health, family and house insurance, in the zoom meeting, office background"
+        LABORATORIO: "as a scientist in a modern laboratory, lab coat, scientific equipment, research materials, professional scientific environment, focused expression",
+
+        OFFICE: "as a business professional in a modern office, contemporary workspace, computer setup, business casual attire, professional corporate environment",
+
+        SALA_DE_AULA: "as an educator in a modern classroom, teaching materials, whiteboard or digital board, professional teaching attire, engaging with students atmosphere",
+
+        TECH: "as a tech professional in a modern tech workspace, multiple monitors, coding environment, casual tech attire, innovative atmosphere, digital equipment"
     }
 };
 
 // URLs de referência de estilo para cada prompt
-
+// Nota: As URLs são as mesmas para masculino e feminino
 export const STYLE_REFERENCES = {
     masculino: {
-        CLAY_OFFICE: "https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/ReferenciaAgenciaHomem.png",
-        CORRETOR_FUTURO: "https://foto-ai-picbrand.s3.sa-east-1.amazonaws.com/referenciaCorretorFuturoHomem.png",
-        HOLOGRAMAS_SEGUROS: "https://foto-ai-picbrand.s3.sa-east-1.amazonaws.com/referenciaHologramasSegurosHomem.png",
-        LIVRARIA_SEGUROS: "https://foto-ai-picbrand.s3.sa-east-1.amazonaws.com/referenciaLivrariaSegurosHomem.png",
-        PALESTRANDO: "https://foto-ai-picbrand.s3.sa-east-1.amazonaws.com/referenciaPalestrandoHomem.png",
-        PODERES: "https://foto-ai-picbrand.s3.sa-east-1.amazonaws.com/referenciaPoderesHomem.png",
-        SALA_FUTURO: "https://foto-ai-picbrand.s3.sa-east-1.amazonaws.com/referenciaSalaFuturoHomem.png",
-        SALA_PIXAR: "https://foto-ai-picbrand.s3.sa-east-1.amazonaws.com/referenciaSalaPixarHomem.png",
-        SEGUROS_ONLINE: "https://foto-ai-picbrand.s3.sa-east-1.amazonaws.com/referenciaSegurosOnlineHomem.png"
+        AGENCIA: "https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaAgencia.png",
+        CLINICA_DE_ANIMAIS: "https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/ReferenciaClinica.png",
+        CONSTRUCAO: "https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaConstrucao.png",
+        COZINHA: "https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaCozinha.png",
+        ESPORTE: "https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaEsporte.png",
+        FABRICA: "https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaFabrica.png",
+        HOSPITAL: "https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaHospital.png",
+        INFLUENCIADOR: "https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaInfluencuador.png",
+        LABORATORIO: "https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaLaboratorio.png",
+        OFFICE: "https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaOffice.png",
+        SALA_DE_AULA: "https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaSaladeaula.png",
+        TECH: "https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaTech.png"
     },
     feminino: {
-        CLAY_OFFICE: "https://foto-ai-picbrand.s3.sa-east-1.amazonaws.com/referenciaClayOfficeMulher.png",
-        CORRETOR_FUTURO: "https://foto-ai-picbrand.s3.sa-east-1.amazonaws.com/referenciaCorretorFuturoMulher.png",
-        HOLOGRAMAS_SEGUROS: "https://foto-ai-picbrand.s3.sa-east-1.amazonaws.com/referenciaHologramasSegurosMulher.png",
-        LIVRARIA_SEGUROS: "https://foto-ai-picbrand.s3.sa-east-1.amazonaws.com/referenciaLivrariaSegurosMulher.png",
-        PALESTRANDO: "https://foto-ai-picbrand.s3.sa-east-1.amazonaws.com/referenciaPalestrandoMulher.png",
-        PODERES: "https://foto-ai-picbrand.s3.sa-east-1.amazonaws.com/referenciaPoderesMulher.png",
-        SALA_FUTURO: "https://foto-ai-picbrand.s3.sa-east-1.amazonaws.com/referenciaSalaFuturoMulher.png",
-        SALA_PIXAR: "https://foto-ai-picbrand.s3.sa-east-1.amazonaws.com/referenciaSalaPixarMulher.png",
-        SEGUROS_ONLINE: "https://foto-ai-picbrand.s3.sa-east-1.amazonaws.com/referenciaSegurosOnlineMulher.png"
+        AGENCIA: "https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaAgencia.png",
+        CLINICA_DE_ANIMAIS: "https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/ReferenciaClinica.png",
+        CONSTRUCAO: "https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaConstrucao.png",
+        COZINHA: "https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaCozinha.png",
+        ESPORTE: "https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaEsporte.png",
+        FABRICA: "https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaFabrica.png",
+        HOSPITAL: "https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaHospital.png",
+        INFLUENCIADOR: "https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaInfluencuador.png",
+        LABORATORIO: "https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaLaboratorio.png",
+        OFFICE: "https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaOffice.png",
+        SALA_DE_AULA: "https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaSaladeaula.png",
+        TECH: "https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/referenciaTech.png"
     }
 };
 
 // Estilos disponíveis
 export const AVAILABLE_STYLES = [
-    { id: 'CLAY_OFFICE', name: 'Clay Office' },
-    { id: 'CORRETOR_FUTURO', name: 'Corretor do Futuro' },
-    { id: 'HOLOGRAMAS_SEGUROS', name: 'Hologramas de Seguros' },
-    { id: 'LIVRARIA_SEGUROS', name: 'Livraria dos Seguros' },
-    { id: 'PALESTRANDO', name: 'Palestrando' },
-    { id: 'PODERES', name: 'Poderes' },
-    { id: 'SALA_FUTURO', name: 'Sala do Futuro' },
-    { id: 'SALA_PIXAR', name: 'Sala Pixar' },
-    { id: 'SEGUROS_ONLINE', name: 'Seguros Online' }
+    { id: 'AGENCIA', name: 'Agência' },
+    { id: 'CLINICA_DE_ANIMAIS', name: 'Clínica de Animais' },
+    { id: 'CONSTRUCAO', name: 'Construção' },
+    { id: 'COZINHA', name: 'Cozinha' },
+    { id: 'ESPORTE', name: 'Esporte' },
+    { id: 'FABRICA', name: 'Fábrica' },
+    { id: 'HOSPITAL', name: 'Hospital' },
+    { id: 'INFLUENCIADOR', name: 'Influenciador' },
+    { id: 'LABORATORIO', name: 'Laboratório' },
+    { id: 'OFFICE', name: 'Office' },
+    { id: 'SALA_DE_AULA', name: 'Sala de Aula' },
+    { id: 'TECH', name: 'Tech' }
 ];
 
 /**
  * Obtém o prompt baseado no gênero e estilo selecionados
  * Para Runway: retorna apenas o texto descritivo, sem URLs
  * @param {string} gender - Gênero selecionado ('masculino' ou 'feminino')
- * @param {string} style - Estilo selecionado (ex: 'CLAY_OFFICE')
+ * @param {string} style - Estilo selecionado (ex: 'AGENCIA')
  * @returns {string} - Prompt formatado para Runway
  */
 export const getPrompt = (gender, style) => {
     const promptTemplate = PROMPTS_DATA[gender]?.[style];
     if (!promptTemplate) {
         console.error(`Prompt não encontrado para gênero: ${gender} e estilo: ${style}`);
-        // Fallback para CLAY_OFFICE
-        return PROMPTS_DATA[gender]?.CLAY_OFFICE || PROMPTS_DATA.masculino.CLAY_OFFICE;
+        // Fallback para AGENCIA
+        return PROMPTS_DATA[gender]?.AGENCIA || PROMPTS_DATA.masculino.AGENCIA;
     }
 
     console.log('=== PROMPT SELECIONADO ===');
@@ -109,14 +128,14 @@ export const getPrompt = (gender, style) => {
 /**
  * Obtém a URL de referência de estilo
  * @param {string} gender - Gênero selecionado ('masculino' ou 'feminino')
- * @param {string} style - Estilo selecionado (ex: 'CLAY_OFFICE')
+ * @param {string} style - Estilo selecionado (ex: 'AGENCIA')
  * @returns {string} - URL da imagem de referência
  */
 export const getStyleReference = (gender, style) => {
     const styleRef = STYLE_REFERENCES[gender]?.[style];
     if (!styleRef) {
         console.warn(`Referência de estilo não encontrada para ${gender} - ${style}`);
-        return STYLE_REFERENCES[gender]?.CLAY_OFFICE || STYLE_REFERENCES.masculino.CLAY_OFFICE;
+        return STYLE_REFERENCES[gender]?.AGENCIA || STYLE_REFERENCES.masculino.AGENCIA;
     }
 
     console.log('=== REFERÊNCIA DE ESTILO ===');

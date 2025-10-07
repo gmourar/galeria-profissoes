@@ -158,8 +158,7 @@ const LoadingScreen = () => {
           </div>
 
           <div className="loading-text">
-            <h2>Gerando suas fotos com Runway...</h2>
-            <p>A IA está criando sua imagem personalizada</p>
+            <h2>Estamos gerando sua foto!</h2>
           </div>
 
           <div className="progress-section">

@@ -496,9 +496,6 @@ export const saveSelectedPhoto = async (photoName, imageUrl, meta = {}) => {
   }
 };
 
-/**
- * Atualiza a quantidade de impressão
- */
 export const updatePhotoQuantity = async (photoName, quantidade) => {
   try {
     console.log('=== UPDATE PHOTO QUANTITY INICIADO ===');
@@ -537,6 +534,59 @@ export const updatePhotoQuantity = async (photoName, quantidade) => {
     
   } catch (error) {
     console.error('❌ ERRO AO ATUALIZAR QUANTIDADE:', error);
+    throw error;
+  }
+};
+
+/**
+ * Marca a foto como impressa no banco de dados
+ */
+export const markPhotoAsPrinted = async (photoName, quantidade = 1) => {
+  try {
+    console.log('=== MARK PHOTO AS PRINTED INICIADO ===');
+    console.log('Photo Name:', photoName);
+    console.log('Quantidade:', quantidade);
+
+    if (API_CONFIG.USE_MOCKS) {
+      console.log('Usando mocks para marcar foto como impressa');
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      return {
+        success: true,
+        message: 'Foto marcada como impressa',
+        photo_name: photoName,
+        quantidade: quantidade,
+        impressa: true
+      };
+    }
+
+    const printUrl = getApiUrl(`/photos/${photoName}/quantidade`);
+    console.log('=== FAZENDO PATCH PARA IMPRIMIR ===');
+    console.log('URL completa:', printUrl);
+
+    const response = await fetch(printUrl, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ quantidade })
+    });
+
+    console.log('=== RESPOSTA DA API IMPRIMIR ===');
+    console.log('Status:', response.status);
+    console.log('OK:', response.ok);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Erro da API:', errorText);
+      throw new Error(`Erro ao marcar foto como impressa: ${response.status} ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    console.log('✅ Foto marcada como impressa:', result);
+    return result;
+    
+  } catch (error) {
+    console.error('❌ ERRO AO MARCAR FOTO COMO IMPRESSA:', error);
     throw error;
   }
 };

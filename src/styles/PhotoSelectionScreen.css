@@ -17,6 +17,11 @@
   border: 3px solid #e42125;
 }
 
+/* Modo de foto única - container ajustado */
+.photo-container.single-photo-mode {
+  max-width: 800px;
+}
+
 /* Logo da marca */
 .logo-container {
   text-align: center;
@@ -61,6 +66,63 @@
   font-size: 0.9rem;
 }
 
+/* ===== LAYOUT PARA IMAGEM ÚNICA ===== */
+.single-photo-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.single-photo-item {
+  position: relative;
+  cursor: pointer;
+  border-radius: 15px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 3px solid transparent;
+  max-width: 100%;
+  width: 100%;
+}
+
+.single-photo-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.single-photo-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.single-photo-frame {
+  position: relative;
+  width: 100%;
+  border: 4px solid #e42125;
+  border-radius: 15px;
+  overflow: hidden;
+  background: #f4f1e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.single-photo-image {
+  width: 100%;
+  height: auto;
+  max-height: 70vh;
+  object-fit: contain;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.single-photo-item:hover .single-photo-image {
+  transform: scale(1.02);
+}
+
+/* ===== LAYOUT PARA MÚLTIPLAS IMAGENS (GRID) ===== */
 .photos-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -148,7 +210,8 @@
 }
 
 .photo-item:hover .photo-overlay,
-.photo-item.selected .photo-overlay {
+.photo-item.selected .photo-overlay,
+.single-photo-item:hover .photo-overlay {
   opacity: 1;
 }
 
@@ -377,6 +440,10 @@
     height: 250px;
   }
 
+  .single-photo-image {
+    max-height: 60vh;
+  }
+
   .action-buttons {
     flex-direction: column;
     align-items: center;
@@ -396,6 +463,10 @@
 
   .photo-wrapper {
     height: 300px;
+  }
+
+  .single-photo-image {
+    max-height: 50vh;
   }
 }
 
