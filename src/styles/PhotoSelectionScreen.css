@@ -302,3 +302,7 @@
     max-width: 100%;
   }
 }
+
+.photo-selection-screen::-webkit-scrollbar {
+  display: none;             /* Chrome, Safari e outros WebKit */
+}
