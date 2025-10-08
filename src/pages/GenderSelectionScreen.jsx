@@ -37,14 +37,14 @@ const GenderSelectionScreen = () => {
             className={`gender-button ${selectedGender === 'masculino' ? 'selected' : ''}`}
             onClick={() => handleGenderSelect('masculino')}
           >
-            Corretor do futuro
+            Masculino
           </button>
          
           <button
             className={`gender-button ${selectedGender === 'feminino' ? 'selected' : ''}`}
             onClick={() => handleGenderSelect('feminino')}
           >
-            Corretora do futuro
+            Feminino
           </button>
         </div>
 
