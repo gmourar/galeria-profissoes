@@ -120,7 +120,7 @@ const PhotoSelectionScreen = () => {
     localStorage.removeItem('selectedPhoto');
     localStorage.removeItem('aiTaskId');
     localStorage.removeItem('mockProgress');
-    localStorage.removeItem('savedIaUrl'); // também limpa a URL salva
+    localStorage.removeItem('savedIaUrl');
 
     navigate('/');
   };
@@ -135,27 +135,30 @@ const PhotoSelectionScreen = () => {
     );
   }
 
+  // Verifica se é apenas uma imagem
+  const isSingleImage = generatedPhotos.length === 1;
+
   return (
     <div className="photo-selection-screen">
-      <div className="photo-container">
+      <div className={`photo-container ${isSingleImage ? 'single-photo-mode' : ''}`}>
         <div className="header">
-          <h2>Suas fotos estão prontas!</h2>
-          <p>Clique na foto que você mais gostou para salvar:</p>
+          <h2>Sua foto está pronta!</h2>
+          <p>{isSingleImage ? 'Clique na foto para continuar:' : 'Clique na foto que você mais gostou para salvar:'}</p>
         </div>
 
-        <div className="photos-grid">
-          {generatedPhotos.map((photo) => (
+        {isSingleImage ? (
+          // Layout para imagem única - mostra a imagem completa sem cortar
+          <div className="single-photo-container">
             <div
-              key={photo.id}
-              className="photo-item"
-              onClick={() => handlePhotoSelect(photo.id)}
+              className="single-photo-item"
+              onClick={() => handlePhotoSelect(generatedPhotos[0].id)}
             >
-              <div className="photo-wrapper">
-                <div className="photo-frame">
+              <div className="single-photo-wrapper">
+                <div className="single-photo-frame">
                   <img
-                    src={photo.url}
-                    alt={`Foto ${photo.id}`}
-                    className="photo-image"
+                    src={generatedPhotos[0].url}
+                    alt="Foto gerada"
+                    className="single-photo-image"
                   />
                 </div>
                 <div className="photo-overlay">
@@ -163,8 +166,32 @@ const PhotoSelectionScreen = () => {
                 </div>
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ) : (
+          // Layout em grid para múltiplas imagens
+          <div className="photos-grid">
+            {generatedPhotos.map((photo) => (
+              <div
+                key={photo.id}
+                className="photo-item"
+                onClick={() => handlePhotoSelect(photo.id)}
+              >
+                <div className="photo-wrapper">
+                  <div className="photo-frame">
+                    <img
+                      src={photo.url}
+                      alt={`Foto ${photo.id}`}
+                      className="photo-image"
+                    />
+                  </div>
+                  <div className="photo-overlay">
+                    <div className="selection-indicator">Selecionar</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         <div className="action-buttons">
           <button className="start-over-button" onClick={handleStartOver}>

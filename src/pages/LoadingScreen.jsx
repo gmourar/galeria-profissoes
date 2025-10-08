@@ -171,9 +171,6 @@ const LoadingScreen = () => {
                 }}
               ></div>
             </div>
-            <div className="progress-info">
-              <span className="progress-percentage">{progress}%</span>
-            </div>
           </div>
         </div>
       </div>

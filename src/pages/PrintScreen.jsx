@@ -1,3 +1,5 @@
+// Arquivo: PrintScreen.jsx
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { markPhotoAsPrinted } from '../services/photoService';
@@ -231,6 +233,14 @@ const PrintScreen = () => {
               <p>Use a câmera do seu celular para escanear o código</p>
             </div>
             <div className="action-buttons">
+              {/* NOVO BOTÃO: Voltar para Splash Screen e resetar dados */}
+              <button 
+                className="back-button"
+                onClick={handleStartOver}
+                disabled={isPrinting}
+              >
+                Começar de Novo
+              </button>
               <button 
                 className="print-button"
                 onClick={handlePrint}
