@@ -234,19 +234,20 @@ const PrintScreen = () => {
             </div>
             <div className="action-buttons">
               {/* NOVO BOTÃO: Voltar para Splash Screen e resetar dados */}
-              <button 
-                className="back-button"
-                onClick={handleStartOver}
-                disabled={isPrinting}
-              >
-                Começar de Novo
-              </button>
+
               <button 
                 className="print-button"
                 onClick={handlePrint}
                 disabled={isPrinting}
               >
                 Imprimir Foto
+              </button>
+              <button 
+                className="back-button"
+                onClick={handleStartOver}
+                disabled={isPrinting}
+              >
+                Começar de Novo
               </button>
             </div>
           </div>
