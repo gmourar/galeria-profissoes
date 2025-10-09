@@ -1,61 +1,43 @@
-import { getApiUrl, API_CONFIG } from '../config/api';
+// Configuração da API atualizada para Runway
+export const API_CONFIG = {
+  BASE_URL: 'http://127.0.0.1:8010',
+  ENDPOINTS: {
+    UPLOAD_PHOTO: '/photos/upload',
+    GENERATE_PHOTOS: '/generate',
+    GENERATE_UPLOAD: '/generate-upload'
+  },
+  USE_MOCKS: false
+};
+
+export const getApiUrl = (endpoint) => {
+  const fullUrl = `${API_CONFIG.BASE_URL}${endpoint}`;
+  console.log('=== GET API URL ===');
+  console.log('Endpoint:', endpoint);
+  console.log('URL completa:', fullUrl);
+  return fullUrl;
+};
 
 /**
  * Converte uma imagem base64 para Blob
- * @param {string} base64String - String base64 da imagem
- * @param {string} mimeType - Tipo MIME da imagem (ex: 'image/jpeg')
- * @returns {Blob} - Blob da imagem
  */
 export const base64ToBlob = (base64String, mimeType = 'image/jpeg') => {
-  // Remove o prefixo data:image/jpeg;base64, se existir
   const base64Data = base64String.replace(/^data:image\/[a-z]+;base64,/, '');
-  
-  // Converte base64 para bytes
   const byteCharacters = atob(base64Data);
   const byteNumbers = new Array(byteCharacters.length);
-  
+
   for (let i = 0; i < byteCharacters.length; i++) {
     byteNumbers[i] = byteCharacters.charCodeAt(i);
   }
-  
+
   const byteArray = new Uint8Array(byteNumbers);
   return new Blob([byteArray], { type: mimeType });
 };
 
 /**
  * Faz upload de uma foto para o servidor
- * @param {string} base64Photo - Foto em formato base64
- * @param {Function} onProgress - Callback para progresso do upload
- * @param {Function} onSuccess - Callback para sucesso
- * @param {Function} onError - Callback para erro
- */
-/**
- * Faz upload de uma foto para o servidor. Aceita base64 ou Blob/File
- * @param {string|Blob|File} photoInput - Imagem em base64 ou Blob/File
- * @param {Function} onProgress
- * @param {Function} onSuccess
- * @param {Function} onError
- */
-/**
- * Aplica moldura (e/ou overlay de logo) e devolve um Blob pronto para upload
- * @param {string} imageUrl - URL da imagem original
- * @param {Object} opts
- * @param {string} [opts.logoSrc='/src/assets/villa11.png'] - caminho do logo
- * @param {string} [opts.frameSrc] - PNG de moldura com fundo transparente (opcional)
- * @param {number} [opts.quality=0.9] - qualidade do JPEG
- * @returns {Promise<Blob>}
- */
-/**
- * Aplica moldura e salva no endpoint /photos/{photoName}/save-ia
- * (faz upload do resultado para obter uma URL pública antes de salvar)
- * @param {string} photoName - ex.: 'foto1'
- * @param {string} imageUrl  - URL da imagem que a IA gerou/selecionou
- * @param {Object} frameOpts - opções repassadas ao applyFrameToImageBlob
- * @returns {Promise<Object>} - resposta do save-ia
  */
 export const uploadPhoto = async (photoInput, onProgress, onSuccess, onError) => {
   try {
-    // Normaliza para Blob
     let blob;
     if (typeof photoInput === 'string') {
       blob = base64ToBlob(photoInput);
@@ -64,62 +46,46 @@ export const uploadPhoto = async (photoInput, onProgress, onSuccess, onError) =>
     } else {
       throw new Error('Formato de imagem não suportado para upload');
     }
-    
-    // Cria FormData
+
     const formData = new FormData();
     formData.append('file', blob, 'photo.jpg');
-    
-    // Debug: verifica se mocks estão habilitados
+
     console.log('=== UPLOAD PHOTO DEBUG ===');
     console.log('API_CONFIG.USE_MOCKS:', API_CONFIG.USE_MOCKS);
     console.log('API_CONFIG.BASE_URL:', API_CONFIG.BASE_URL);
-    console.log('API_CONFIG.ENDPOINTS.UPLOAD_PHOTO:', API_CONFIG.ENDPOINTS.UPLOAD_PHOTO);
-    
-    // Decide entre mock e API real
+
     if (API_CONFIG.USE_MOCKS) {
       console.log('Usando mocks para desenvolvimento');
-      // Mantém o comportamento simulado existente, suportando Blob ou base64
       return simulateUpload(photoInput, onProgress, onSuccess, onError);
     }
-    
-    // URL completa do endpoint
+
     const uploadUrl = getApiUrl(API_CONFIG.ENDPOINTS.UPLOAD_PHOTO);
     console.log('=== CONECTANDO NA API REAL ===');
     console.log('URL COMPLETA:', uploadUrl);
-    console.log('BASE_URL:', API_CONFIG.BASE_URL);
-    console.log('ENDPOINT:', API_CONFIG.ENDPOINTS.UPLOAD_PHOTO);
-    
-    // Configuração do fetch
-    console.log('=== INICIANDO FETCH ===');
-    console.log('URL FINAL:', uploadUrl);
-    console.log('MÉTODO: POST');
-    console.log('BODY: FormData com arquivo');
-    
+
     const response = await fetch(uploadUrl, {
       method: 'POST',
       body: formData
     });
-    
+
     console.log('=== RESPOSTA RECEBIDA ===');
     console.log('Status:', response.status);
-    console.log('Status Text:', response.statusText);
     console.log('OK:', response.ok);
-    
+
     if (!response.ok) {
       throw new Error(`Erro no upload: ${response.status} ${response.statusText}`);
     }
-    
+
     const result = await response.json();
-    
-    // Salva o nome da foto retornado pela API
+
     if (result.nome) {
       localStorage.setItem('uploadedPhotoName', result.nome);
     }
-    
+
     if (onSuccess) {
       onSuccess(result);
     }
-    
+
   } catch (error) {
     console.error('Erro no upload da foto:', error);
     if (onError) {
@@ -127,6 +93,247 @@ export const uploadPhoto = async (photoInput, onProgress, onSuccess, onError) =>
     }
   }
 };
+
+/**
+ * Simula upload para desenvolvimento
+ */
+export const simulateUpload = (photoInput, onProgress, onSuccess, onError) => {
+  let progress = 0;
+  const interval = setInterval(() => {
+    progress += 10;
+    if (onProgress) {
+      onProgress(progress);
+    }
+
+    if (progress >= 100) {
+      clearInterval(interval);
+
+      const photoName = `foto_${Date.now()}.jpg`;
+      let previewUrl;
+
+      if (typeof photoInput === 'string') {
+        previewUrl = photoInput;
+      } else if (photoInput instanceof Blob) {
+        previewUrl = URL.createObjectURL(photoInput);
+      }
+
+      const mockResponse = {
+        id: Math.floor(Math.random() * 1000) + 1,
+        nome: photoName,
+        original_url: previewUrl,
+        ia_url: null,
+        quantidade: 0,
+        impressa: false
+      };
+
+      localStorage.setItem('uploadedPhotoName', photoName);
+      localStorage.setItem('uploadedPhotoUrl', previewUrl);
+
+      if (onSuccess) {
+        onSuccess(mockResponse);
+      }
+    }
+  }, 200);
+};
+
+/**
+ * Obtém a URL da referência de estilo baseada na profissão e gênero
+ */
+export const getStyleReferenceUrl = (profession, gender) => {
+  const styleReferences = {
+    CLAY_OFFICE: {
+      masculino: 'https://cdn.midjourney.com/47d0a76c-b252-4eee-b944-40f79918c3d7/0_0.png',
+      feminino: 'https://cdn.midjourney.com/32b3d58d-46fb-486d-b802-d33b1015fabb/0_0.png'
+    },
+    CORRETOR_FUTURO: {
+      masculino: 'https://cdn.midjourney.com/b7cb8eaf-f128-416e-b1b5-fe22babcd044/0_0.png',
+      feminino: 'https://cdn.midjourney.com/4b429b29-16fe-4529-babd-d9a78b05de4b/0_0.png'
+    },
+    HOLOGRAMAS_SEGUROS: {
+      masculino: 'https://cdn.midjourney.com/9480a46b-c47e-411c-ba7f-2a94e6438287/0_0.png',
+      feminino: 'https://cdn.midjourney.com/9480a46b-c47e-411c-ba7f-2a94e6438287/0_0.png'
+    },
+    LIVRARIA_SEGUROS: {
+      masculino: 'https://cdn.midjourney.com/fa8a1254-332f-4aa4-a67c-0eb888a814a5/0_0.png',
+      feminino: 'https://cdn.midjourney.com/58b19852-1468-433c-ad85-7f2d08f8b464/0_0.png'
+    },
+    PALESTRANDO: {
+      masculino: 'https://cdn.midjourney.com/7ef601cc-b74d-4014-9e53-b6a29b9e01d4/0_0.png',
+      feminino: 'https://cdn.midjourney.com/b1b09b2e-9148-4c37-963b-f9ad083094c3/0_0.png'
+    },
+    PODERES: {
+      masculino: 'https://cdn.midjourney.com/d765e7b4-1561-47c0-ae07-ad2ff046f1f0/0_0.png',
+      feminino: 'https://cdn.midjourney.com/e95e5b2a-644b-4d71-86f5-4cb76a705941/0_0.png'
+    },
+    SALA_FUTURO: {
+      masculino: 'https://cdn.midjourney.com/88a7cb28-0a47-4606-a58a-f7a02e5a2867/0_0.png',
+      feminino: 'https://cdn.midjourney.com/58b19852-1468-433c-ad85-7f2d08f8b464/0_0.png'
+    },
+    SALA_PIXAR: {
+      masculino: 'https://cdn.midjourney.com/47d0a76c-b252-4eee-b944-40f79918c3d7/0_0.png',
+      feminino: 'https://cdn.midjourney.com/32b3d58d-46fb-486d-b802-d33b1015fabb/0_0.png'
+    },
+    SEGUROS_ONLINE: {
+      masculino: 'https://cdn.midjourney.com/fa8a1254-332f-4aa4-a67c-0eb888a814a5/0_0.png',
+      feminino: 'https://cdn.midjourney.com/58b19852-1468-433c-ad85-7f2d08f8b464/0_0.png'
+    }
+  };
+
+  const professionKey = profession.toUpperCase().replace(/ /g, '_');
+  const genderKey = gender.toLowerCase();
+
+  if (styleReferences[professionKey] && styleReferences[professionKey][genderKey]) {
+    return styleReferences[professionKey][genderKey];
+  }
+
+  console.warn(`Referência de estilo não encontrada para ${profession} - ${gender}`);
+  return styleReferences.CLAY_OFFICE[genderKey] || styleReferences.CLAY_OFFICE.masculino;
+};
+
+/**
+ * Constrói a URL completa da foto original
+ * Remove extensão existente antes de adicionar .png
+ * URL sem "ns" conforme bucket correto
+ */
+export const buildPhotoUrl = (photoName) => {
+  // Remove extensão .jpg, .jpeg, .png se existir
+  const nameWithoutExt = photoName.replace(/\.(jpg|jpeg|png)$/i, '');
+  return `https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/${nameWithoutExt}.png`;
+};
+
+/**
+ * Gera foto com IA usando Runway (novo backend)
+ * @param {string} prompt - Prompt textual
+ * @param {string} s3Url - URL pública da foto do usuário no S3
+ * @param {string} styleRefUrl - URL pública da imagem de referência de estilo
+ * @param {string} aspectRatio - "1:1", "9:16" ou "16:9"
+ * @returns {Promise<Object>} - Resposta com task_id
+ */
+export const generatePhotoWithAI = async (prompt, s3Url, styleRefUrl, aspectRatio = '1080:1920') => {
+  try {
+    console.log('=== GENERATE PHOTO WITH AI (NEW FORMAT) ===');
+    console.log('Prompt:', prompt);
+    console.log('S3 URL (foto do usuário):', s3Url);
+    console.log('Style Ref URL (referência de estilo):', styleRefUrl);
+
+    const generateUrl = getApiUrl(API_CONFIG.ENDPOINTS.GENERATE_PHOTOS);
+    console.log('POST ->', generateUrl);
+
+    // Body no novo formato solicitado
+    const requestBody = {
+      promptText: prompt,
+      model: "gen4_image_turbo",
+      referenceImages: [
+        { uri: s3Url, tag: "user" },
+        { uri: styleRefUrl, tag: "ref" }
+      ]
+    };
+
+    console.log('=== BODY ENVIADO ===');
+    console.log(JSON.stringify(requestBody, null, 2));
+
+    const response = await fetch(generateUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestBody)
+    });
+
+    console.log('Status:', response.status);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Erro da API:', errorText);
+      throw new Error(`Erro na geração: ${response.status} ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    console.log('✅ Resultado recebido:', result);
+    return result;
+
+  } catch (error) {
+    console.error('❌ ERRO AO GERAR FOTO COM IA:', error);
+    throw error;
+  }
+};
+
+
+/**
+ * Verifica o progresso de uma tarefa de geração (Runway)
+ * @param {string} taskId - ID da tarefa
+ * @returns {Promise<Object>} - { progress: number, image_urls?: string[] }
+ */
+export const checkProgress = async (taskId) => {
+  try {
+    console.log('=== CHECK PROGRESS INICIADO ===');
+    console.log('Task ID:', taskId);
+
+    if (API_CONFIG.USE_MOCKS) {
+      console.log('Usando mocks para verificação de progresso');
+
+      const currentProgress = parseInt(localStorage.getItem('mockProgress') || '0');
+      let newProgress = currentProgress + Math.floor(Math.random() * 20) + 10;
+      if (newProgress > 100) newProgress = 100;
+
+      localStorage.setItem('mockProgress', newProgress.toString());
+
+      if (newProgress === 100) {
+        const originalPhotoUrl = localStorage.getItem('uploadedPhotoUrl');
+
+        // Runway geralmente retorna 1 imagem
+        const mockImages = originalPhotoUrl
+          ? [originalPhotoUrl]
+          : [`https://cdn.runway.ml/mock-${taskId}-1.png`];
+
+        return {
+          progress: 100,
+          image_urls: mockImages
+        };
+      }
+
+      return { progress: newProgress };
+    }
+
+    const progressUrl = getApiUrl(`/progress/${taskId}`);
+    console.log('=== FAZENDO REQUISIÇÃO REAL ===');
+    console.log('URL completa:', progressUrl);
+
+    if (!taskId || typeof taskId !== 'string' || taskId.trim() === '') {
+      throw new Error('Task ID inválido ou vazio');
+    }
+
+    const response = await fetch(progressUrl, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    console.log('=== RESPOSTA DA API DE PROGRESSO ===');
+    console.log('Status:', response.status);
+    console.log('OK:', response.ok);
+
+    if (!response.ok) {
+      throw new Error(`Erro ao verificar progresso: ${response.status} ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    console.log('=== RESULTADO DA API ===');
+    console.log('Progress:', result.progress);
+    console.log('Image URLs:', result.image_urls);
+
+    return result;
+
+  } catch (error) {
+    console.error(' ERRO AO VERIFICAR PROGRESSO:', error);
+    throw error;
+  }
+};
+
+/**
+ * Aplica moldura e logo a uma imagem
+ */
 export const applyFrameToImageBlob = async (imageUrl, opts = {}) => {
   const {
     logoSrc = '/moldura.png',
@@ -152,8 +359,6 @@ export const applyFrameToImageBlob = async (imageUrl, opts = {}) => {
 
         canvas.width = w;
         canvas.height = h;
-
-        // 1) imagem base
         ctx.drawImage(baseImg, 0, 0, w, h);
 
         const finishToBlob = () => {
@@ -164,8 +369,7 @@ export const applyFrameToImageBlob = async (imageUrl, opts = {}) => {
         };
 
         const drawBorderLast = () => {
-          // 4) borda por último para não ser coberta
-          const border = Math.round(Math.min(w, h) * 0.02); // 2%
+          const border = Math.round(Math.min(w, h) * 0.02);
           ctx.lineWidth = border;
           ctx.strokeStyle = '#f4f1e1';
           ctx.strokeRect(border / 2, border / 2, w - border, h - border);
@@ -207,484 +411,15 @@ export const applyFrameToImageBlob = async (imageUrl, opts = {}) => {
   });
 };
 
-export const saveSelectedPhotoWithFrame = async (photoName, imageUrl, frameOpts = {}) => {
-  // 1) gera o Blob com moldura
-  const framedBlob = await applyFrameToImageBlob(imageUrl, frameOpts);
-
-  // 2) sobe esse Blob e pega a URL pública
-  const uploaded = await uploadPhoto(framedBlob);
-  const publicUrl = uploaded?.original_url;
-  if (!publicUrl) throw new Error('Upload não retornou URL pública');
-
-  // 3) salva no endpoint existente
-  const result = await saveSelectedPhoto(photoName, publicUrl);
-  return result;
-};
-
 /**
- * Simula upload para desenvolvimento (quando não há backend)
- * @param {string} base64Photo - Foto em formato base64
- * @param {Function} onProgress - Callback para progresso
- * @param {Function} onSuccess - Callback para sucesso
- * @param {Function} onError - Callback para erro
- */
-export const simulateUpload = (photoInput, onProgress, onSuccess, onError) => {
-  // Simula progresso do upload
-  let progress = 0;
-  const interval = setInterval(() => {
-    progress += 10;
-    if (onProgress) {
-      onProgress(progress);
-    }
-    
-    if (progress >= 100) {
-      clearInterval(interval);
-      
-      // Simula resposta de sucesso usando a foto real
-      const photoName = `foto_${Date.now()}.jpg`;
-      
-      // Cria uma URL de preview da foto real para uso posterior
-      let previewUrl;
-      if (typeof photoInput === 'string') {
-        previewUrl = photoInput; // data URL da foto capturada
-      } else if (photoInput instanceof Blob) {
-        previewUrl = URL.createObjectURL(photoInput);
-      }
-      
-      const mockResponse = {
-        id: Math.floor(Math.random() * 1000) + 1,
-        nome: photoName,
-        original_url: previewUrl, // Usa a foto real capturada
-        ia_url: null,
-        quantidade: 0,
-        impressa: false
-      };
-      
-      // Salva o nome da foto e a URL real para uso posterior
-      localStorage.setItem('uploadedPhotoName', photoName);
-      localStorage.setItem('uploadedPhotoUrl', previewUrl);
-      
-      if (onSuccess) {
-        onSuccess(mockResponse);
-      }
-    }
-  }, 200);
-};
-
-/**
- * Gera fotos usando IA baseado no prompt fornecido
- * @param {string} prompt - Prompt para geração da foto
- * @returns {Promise<Array>} - Array com as fotos geradas
- */
-export const generatePhotos = async (prompt) => {
-  try {
-    // Se estiver com mocks ligados, retorna simulado direto
-    if (API_CONFIG.USE_MOCKS) {
-      return simulateGeneratedPhotos();
-    }
-
-    // URL da API de geração
-    const generateUrl = getApiUrl(API_CONFIG.ENDPOINTS.GENERATE_PHOTOS);
-
-    const response = await fetch(generateUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ prompt })
-    });
-
-    if (!response.ok) {
-      throw new Error(`Erro na geração: ${response.status} ${response.statusText}`);
-    }
-
-    const result = await response.json();
-    // Backends podem responder com { photos: [...] } ou outra chave; padroniza
-    if (Array.isArray(result)) return result;
-    return result.photos || result.data || [];
-    
-  } catch (error) {
-    console.error('Erro ao gerar fotos:', error);
-    // Em caso de erro, retorna fotos simuladas para desenvolvimento
-    return simulateGeneratedPhotos();
-  }
-};
-
-/**
- * Gera foto com IA usando prompt formatado com photoUrl e styleRef
- * @param {string} prompt - Prompt formatado com placeholders
- * @param {string} photoUrl - URL da foto original
- * @param {string} styleRef - URL da referência de estilo
- * @returns {Promise<Object>} - Resposta com task_id
- */
-export const generatePhotoWithAI = async (prompt, photoUrl, styleRef) => {
-  try {
-    console.log('=== GENERATE PHOTO WITH AI INICIADO ===');
-    console.log('Prompt original:', prompt);
-    console.log('Photo URL:', photoUrl);
-    console.log('Style Ref:', styleRef);
-    console.log('API_CONFIG.USE_MOCKS:', API_CONFIG.USE_MOCKS);
-    
-    // Se estiver com mocks ligados, simula a resposta
-    if (API_CONFIG.USE_MOCKS) {
-      console.log('Usando mocks para geração de IA');
-      // Simula delay da IA
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      const mockTaskId = `task_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      return { task_id: mockTaskId };
-    }
-
-    // Substitui os placeholders no prompt
-    const formattedPrompt = prompt
-      .replace('{photoUrl}', photoUrl)
-      .replace('{styleRef}', styleRef);
-
-    console.log('=== PROMPT FORMATADO ===');
-    console.log('Prompt final:', formattedPrompt);
-
-    // URL da API de geração
-    const generateUrl = getApiUrl(API_CONFIG.ENDPOINTS.GENERATE_PHOTOS);
-    
-    console.log('=== FAZENDO POST PARA /generate ===');
-    console.log('URL completa:', generateUrl);
-    console.log('Método: POST');
-    console.log('Headers: Content-Type: application/json');
-    
-    // Prepara o body
-    const requestBody = { prompt: formattedPrompt };
-    const bodyString = JSON.stringify(requestBody);
-    
-    console.log('=== BODY DA REQUISIÇÃO ===');
-    console.log('Body JSON:', bodyString);
-    console.log('Body objeto:', requestBody);
-    console.log('Tamanho do body:', bodyString.length, 'caracteres');
-
-    const response = await fetch(generateUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: bodyString
-    });
-
-    console.log('=== RESPOSTA DA API /generate ===');
-    console.log('Status:', response.status);
-    console.log('Status Text:', response.statusText);
-    console.log('OK:', response.ok);
-
-    if (!response.ok) {
-      throw new Error(`Erro na geração: ${response.status} ${response.statusText}`);
-    }
-
-    const result = await response.json();
-    console.log('Resultado da API:', result);
-    return result;
-    
-  } catch (error) {
-    console.error('❌ ERRO AO GERAR FOTO COM IA:', error);
-    console.error('Detalhes do erro:', error.message);
-    throw error;
-  }
-};
-
-/**
- * Obtém a URL da referência de estilo baseada na profissão e gênero
- * @param {string} profession - Profissão selecionada
- * @param {string} gender - Gênero selecionado ('masculino' ou 'feminino')
- * @returns {string} - URL da imagem de referência
- */
-export const getStyleReferenceUrl = (profession, gender) => {
-  // URLs das imagens de referência do Midjourney
-  const styleReferences = {
-    AGRO: {
-      masculino: 'https://cdn.midjourney.com/47d0a76c-b252-4eee-b944-40f79918c3d7/0_0.png',
-      feminino: 'https://cdn.midjourney.com/32b3d58d-46fb-486d-b802-d33b1015fabb/0_0.png'
-    },
-    BEAUTY: {
-      masculino: 'https://cdn.midjourney.com/47d0a76c-b252-4eee-b944-40f79918c3d7/0_0.png',
-      feminino: 'https://cdn.midjourney.com/32b3d58d-46fb-486d-b802-d33b1015fabb/0_0.png'
-    },
-    CRYPTO: {
-      masculino: 'https://cdn.midjourney.com/9480a46b-c47e-411c-ba7f-2a94e6438287/0_0.png',
-      feminino: 'https://cdn.midjourney.com/9480a46b-c47e-411c-ba7f-2a94e6438287/0_0.png'
-    },
-    ENTREPENEUR: {
-      masculino: 'https://cdn.midjourney.com/7ef601cc-b74d-4014-9e53-b6a29b9e01d4/0_0.png',
-      feminino: 'https://cdn.midjourney.com/b1b09b2e-9148-4c37-963b-f9ad083094c3/0_0.png'
-    },
-    FASHION: {
-      masculino: 'https://cdn.midjourney.com/88a7cb28-0a47-4606-a58a-f7a02e5a2867/0_0.png',
-      feminino: 'https://cdn.midjourney.com/58b19852-1468-433c-ad85-7f2d08f8b464/0_0.png'
-    },
-    FINANCE: {
-      masculino: 'https://cdn.midjourney.com/fa8a1254-332f-4aa4-a67c-0eb888a814a5/0_0.png',
-      feminino: 'https://cdn.midjourney.com/58b19852-1468-433c-ad85-7f2d08f8b464/0_0.png'
-    },
-    REAL_STATE: {
-      masculino: 'https://cdn.midjourney.com/b7cb8eaf-f128-416e-b1b5-fe22babcd044/0_0.png',
-      feminino: 'https://cdn.midjourney.com/4b429b29-16fe-4529-babd-d9a78b05de4b/0_0.png'
-    },
-    TECH: {
-      masculino: 'https://cdn.midjourney.com/d765e7b4-1561-47c0-ae07-ad2ff046f1f0/0_0.png',
-      feminino: 'https://cdn.midjourney.com/e95e5b2a-644b-4d71-86f5-4cb76a705941/0_0.png'
-    }
-  };
-
-  const professionKey = profession.toUpperCase();
-  const genderKey = gender.toLowerCase();
-
-  if (styleReferences[professionKey] && styleReferences[professionKey][genderKey]) {
-    return styleReferences[professionKey][genderKey];
-  }
-
-  // Fallback para caso não encontre
-  console.warn(`Referência de estilo não encontrada para ${profession} - ${gender}`);
-  return styleReferences.AGRO[genderKey] || styleReferences.AGRO.masculino;
-};
-
-/**
- * Constrói a URL completa da foto original
- * @param {string} photoName - Nome da foto retornado pela API
- * @returns {string} - URL completa da foto
- */
-export const buildPhotoUrl = (photoName) => {
-  // Constrói URL real da API
-  return `https://foto-ai-picbrand-ns.s3.sa-east-1.amazonaws.com/${photoName}.png`;
-};
-
-/**
- * Verifica o progresso de uma tarefa de geração
- * @param {string} taskId - ID da tarefa
- * @returns {Promise<Object>} - Resposta com progresso e URLs das imagens
- */
-export const checkProgress = async (taskId) => {
-  try {
-    console.log('=== CHECK PROGRESS INICIADO ===');
-    console.log('Task ID:', taskId);
-    console.log('API_CONFIG.USE_MOCKS:', API_CONFIG.USE_MOCKS);
-
-    // Se estiver com mocks ligados, simula o progresso
-    if (API_CONFIG.USE_MOCKS) {
-      console.log('Usando mocks para verificação de progresso');
-
-      // Simula progresso incremental
-      const currentProgress = parseInt(localStorage.getItem('mockProgress') || '0');
-      let newProgress = currentProgress + Math.floor(Math.random() * 20) + 10;
-
-      if (newProgress > 100) newProgress = 100;
-
-      localStorage.setItem('mockProgress', newProgress.toString());
-
-      if (newProgress === 100) {
-        // Simula URLs de imagens geradas baseadas na foto original
-        const originalPhotoUrl = localStorage.getItem('uploadedPhotoUrl');
-
-        // Se temos a foto original, cria variações simuladas
-        if (originalPhotoUrl) {
-          console.log('Gerando imagens baseadas na foto original:', originalPhotoUrl);
-
-          // Simula 4 variações da foto original com diferentes estilos
-          const mockImages = [
-            originalPhotoUrl, // Variação 1: foto original
-            originalPhotoUrl, // Variação 2: mesma foto (simula processamento)
-            originalPhotoUrl, // Variação 3: mesma foto (simula processamento)
-            originalPhotoUrl  // Variação 4: mesma foto (simula processamento)
-          ];
-
-          return {
-            progress: 100,
-            image_urls: mockImages
-          };
-        } else {
-          // Fallback para URLs simuladas
-          const mockImages = [
-            `https://cdn.apiframe.pro/new-images/mock-${taskId}-1.png`,
-            `https://cdn.apiframe.pro/new-images/mock-${taskId}-2.png`,
-            `https://cdn.apiframe.pro/new-images/mock-${taskId}-3.png`,
-            `https://cdn.apiframe.pro/new-images/mock-${taskId}-4.png`
-          ];
-
-          return {
-            progress: 100,
-            image_urls: mockImages
-          };
-        }
-      }
-
-      return { progress: newProgress };
-    }
-
-    const progressUrl = getApiUrl(`/progress/${taskId}`);
-    console.log('=== FAZENDO REQUISIÇÃO REAL ===');
-    console.log('URL completa:', progressUrl);
-    console.log('Método: GET');
-    console.log('Headers: Content-Type: application/json');
-    console.log('Body: NENHUM (requisição GET)');
-
-    // Debug: verifica se o taskId está correto
-    console.log('=== DEBUG TASK ID ===');
-    console.log('Task ID recebido:', taskId);
-    console.log('Tipo do Task ID:', typeof taskId);
-    console.log('Task ID é string?', typeof taskId === 'string');
-    console.log('Task ID tem tamanho:', taskId ? taskId.length : 'undefined');
-    console.log('Task ID é válido?', taskId && taskId.length > 0);
-
-    // Verifica se o taskId é válido
-    if (!taskId || typeof taskId !== 'string' || taskId.trim() === '') {
-      throw new Error('Task ID inválido ou vazio');
-    }
-
-    // Faz a requisição GET simples (sem body)
-    const response = await fetch(progressUrl, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-
-    console.log('=== RESPOSTA DA API DE PROGRESSO ===');
-    console.log('Status:', response.status);
-    console.log('Status Text:', response.statusText);
-    console.log('OK:', response.ok);
-    console.log('Headers da resposta:', response.headers);
-    console.log('Content-Type:', response.headers.get('content-type'));
-
-    if (!response.ok) {
-      throw new Error(`Erro ao verificar progresso: ${response.status} ${response.statusText}`);
-    }
-
-    const result = await response.json();
-    console.log('=== RESULTADO DA API ===');
-    console.log('Resultado completo:', result);
-    console.log('Progress:', result.progress);
-    console.log('Image URLs:', result.image_urls);
-    console.log('Tipo do progress:', typeof result.progress);
-    console.log('Progress é número?', typeof result.progress === 'number');
-    console.log('Progress é zero?', result.progress === 0);
-    console.log('Progress é null?', result.progress === null);
-    console.log('Progress é undefined?', result.progress === undefined);
-
-    return result;
-
-  } catch (error) {
-    console.error('❌ ERRO AO VERIFICAR PROGRESSO:', error);
-    console.error('Detalhes do erro:', error.message);
-    throw error;
-  }
-};
-
-/**
- * Aplica moldura com logo a uma imagem
- * @param {string} imageUrl - URL da imagem original
- * @returns {Promise<string>} - URL da imagem com moldura
- */
-export const applyFrameToImage = async (imageUrl) => {
-  try {
-    console.log('=== APLICANDO MOLDURA À IMAGEM ===');
-    console.log('Image URL:', imageUrl);
-
-    // Cria um canvas para aplicar a moldura
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-
-    // Carrega a imagem original
-    const originalImage = new Image();
-    originalImage.crossOrigin = 'anonymous';
-
-    return new Promise((resolve, reject) => {
-      originalImage.onload = async () => {
-        try {
-          // Define o tamanho do canvas (mantém proporção)
-          const maxWidth = 800;
-          const maxHeight = 1200;
-          const aspectRatio = originalImage.width / originalImage.height;
-
-          let canvasWidth, canvasHeight;
-          if (aspectRatio > maxWidth / maxHeight) {
-            canvasWidth = maxWidth;
-            canvasHeight = maxWidth / aspectRatio;
-          } else {
-            canvasHeight = maxHeight;
-            canvasWidth = maxHeight * aspectRatio;
-          }
-
-          canvas.width = canvasWidth;
-          canvas.height = canvasHeight;
-
-          // Desenha a imagem original
-          ctx.drawImage(originalImage, 0, 0, canvasWidth, canvasHeight);
-
-          // Carrega o logo
-          const logoImage = new Image();
-          logoImage.crossOrigin = 'anonymous';
-
-          logoImage.onload = () => {
-            try {
-              // Tamanho do logo (proporcional à imagem)
-              const logoSize = Math.min(canvasWidth, canvasHeight) * 0.08; // 8% da menor dimensão
-              const logoX = logoSize * 0.5; // Margem esquerda
-              const logoY = logoSize * 0.5; // Margem superior
-
-              // Desenha fundo semi-transparente para o logo
-              ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-              ctx.fillRect(logoX - 5, logoY - 5, logoSize + 10, logoSize + 10);
-
-              // Desenha o logo
-              ctx.drawImage(logoImage, logoX, logoY, logoSize, logoSize);
-
-              // Converte para blob e cria URL
-              canvas.toBlob((blob) => {
-                const framedImageUrl = URL.createObjectURL(blob);
-                console.log('✅ Moldura aplicada com sucesso');
-                console.log('Nova URL:', framedImageUrl);
-                resolve(framedImageUrl);
-              }, 'image/jpeg', 0.9);
-
-            } catch (error) {
-              console.error('❌ Erro ao aplicar logo:', error);
-              // Se der erro, retorna a imagem original
-              resolve(imageUrl);
-            }
-          };
-
-          logoImage.onerror = () => {
-            console.warn('⚠️ Logo não carregado, usando imagem original');
-            resolve(imageUrl);
-          };
-
-          // Tenta carregar o logo
-          logoImage.src = '/src/assets/villa11.png';
-
-        } catch (error) {
-          console.error('❌ Erro ao processar imagem:', error);
-          resolve(imageUrl);
-        }
-      };
-
-      originalImage.onerror = () => {
-        console.error('❌ Erro ao carregar imagem original');
-        reject(new Error('Erro ao carregar imagem'));
-      };
-
-      originalImage.src = imageUrl;
-    });
-
-  } catch (error) {
-    console.error('❌ ERRO AO APLICAR MOLDURA:', error);
-    return imageUrl; // Retorna a imagem original em caso de erro
-  }
-};
-
-/**
- * Mapa de IDs de estilos para os slugs exigidos pelo backend (tema)
+ * Mapa de IDs de estilos para slugs do backend
  */
 const TEMA_MAP = {
   CLAY_OFFICE: 'clayoffice',
   SALA_PIXAR: 'salapixar',
   SALA_FUTURO: 'salafuturo',
   PALESTRANDO: 'palestra',
-  LIVRARIA_SEGUROS: 'livariaseguros', // conforme especificado
+  LIVRARIA_SEGUROS: 'livariaseguros',
   CORRETOR_FUTURO: 'corretorfuturo',
   PODERES: 'poderes',
   SEGUROS_ONLINE: 'segurosonline',
@@ -698,179 +433,167 @@ const resolveTemaFromStyle = (styleId) => {
 
 /**
  * Salva a foto selecionada pela IA
- * @param {string} photoName - Nome da foto (ex: foto1, foto2, etc.)
- * @param {string} imageUrl - URL da imagem selecionada
- * @param {{gender?: string, style?: string}} [meta] - Dados adicionais: gênero e style ID
- * @returns {Promise<Object>} - Resposta da API
  */
 export const saveSelectedPhoto = async (photoName, imageUrl, meta = {}) => {
-    try {
-        console.log('=== SAVE SELECTED PHOTO INICIADO ===');
-        console.log('Photo Name:', photoName);
-        console.log('Image URL:', imageUrl);
-        console.log('API_CONFIG.USE_MOCKS:', API_CONFIG.USE_MOCKS);
+  try {
+    console.log('=== SAVE SELECTED PHOTO INICIADO ===');
+    console.log('Photo Name:', photoName);
+    console.log('Image URL:', imageUrl);
 
-        // Fallback: busca selectionData no localStorage caso não venha por parâmetro
-        const selectionData = JSON.parse(localStorage.getItem('selectionData') || '{}');
-        const gender = meta.gender || selectionData.gender || null;
-        const styleId = meta.style || selectionData.style || null;
-        const tema = resolveTemaFromStyle(styleId);
+    const selectionData = JSON.parse(localStorage.getItem('selectionData') || '{}');
+    const gender = meta.gender || selectionData.gender || null;
+    const styleId = meta.style || selectionData.style || null;
+    const tema = resolveTemaFromStyle(styleId);
 
-        // Se estiver com mocks ligados, simula a resposta
-        if (API_CONFIG.USE_MOCKS) {
-            console.log('Usando mocks para salvar foto selecionada');
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-            const mockResponse = {
-                success: true,
-                message: 'Foto salva com sucesso',
-                photo_name: photoName,
-                image_url: imageUrl,
-                // Antes: gender,
-                genero: gender,
-                tema,
-            };
-            return mockResponse;
-        }
-
-        // URL completa do endpoint
-        const saveUrl = getApiUrl(`/photos/${photoName}/save-ia`);
-        console.log('=== FAZENDO POST PARA SAVE-IA ===');
-        console.log('URL completa:', saveUrl);
-        console.log('Método: POST');
-        console.log('Headers: Content-Type: application/json');
-
-        // Prepara o body com os campos exigidos
-        const requestBody = {
-            image_url: imageUrl,
-            // Antes: ...(gender ? { gender } : {}),
-            ...(gender ? { genero: gender } : {}),
-            ...(tema ? { tema } : {}),
-        };
-
-        console.log('=== BODY DA REQUISIÇÃO ===');
-        console.log('Body JSON:', JSON.stringify(requestBody));
-
-        const response = await fetch(saveUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(requestBody),
-        });
-
-        console.log('=== RESPOSTA DA API SAVE-IA ===');
-        console.log('Status:', response.status);
-        console.log('Status Text:', response.statusText);
-        console.log('OK:', response.ok);
-
-        if (!response.ok) {
-            throw new Error(`Erro ao salvar foto: ${response.status} ${response.statusText}`);
-        }
-
-        const result = await response.json();
-        console.log('Resultado da API:', result);
-        return result;
-    } catch (error) {
-        console.error('❌ ERRO AO SALVAR FOTO SELECIONADA:', error);
-        console.error('Detalhes do erro:', error.message);
-        throw error;
+    if (API_CONFIG.USE_MOCKS) {
+      console.log('Usando mocks para salvar foto selecionada');
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      return {
+        success: true,
+        message: 'Foto salva com sucesso',
+        photo_name: photoName,
+        image_url: imageUrl,
+        genero: gender,
+        tema,
+      };
     }
+
+    const saveUrl = getApiUrl(`/photos/${photoName}/save-ia`);
+    console.log('=== FAZENDO POST PARA SAVE-IA ===');
+    console.log('URL completa:', saveUrl);
+
+    const requestBody = {
+      image_url: imageUrl,
+      ...(gender ? { genero: gender } : {}),
+      ...(tema ? { tema } : {}),
+    };
+
+    console.log('Body JSON:', JSON.stringify(requestBody));
+
+    const response = await fetch(saveUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    console.log('=== RESPOSTA DA API SAVE-IA ===');
+    console.log('Status:', response.status);
+    console.log('OK:', response.ok);
+
+    if (!response.ok) {
+      throw new Error(`Erro ao salvar foto: ${response.status} ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    console.log('✅ Foto salva:', result);
+    return result;
+
+  } catch (error) {
+    console.error('❌ ERRO AO SALVAR FOTO:', error);
+    throw error;
+  }
 };
 
-/**
- * Atualiza a quantidade de impressão de uma foto
- * @param {string} photoName - Nome da foto (ex: foto1, foto2, etc.)
- * @param {number} quantidade - Quantidade de cópias para impressão
- * @returns {Promise<Object>} - Resposta da API
- */
 export const updatePhotoQuantity = async (photoName, quantidade) => {
   try {
     console.log('=== UPDATE PHOTO QUANTITY INICIADO ===');
     console.log('Photo Name:', photoName);
     console.log('Quantidade:', quantidade);
-    console.log('API_CONFIG.USE_MOCKS:', API_CONFIG.USE_MOCKS);
-    
-    // Se estiver com mocks ligados, simula a resposta
+
     if (API_CONFIG.USE_MOCKS) {
       console.log('Usando mocks para atualizar quantidade');
-      // Simula delay da API
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      const mockResponse = {
+      return {
         id: 1,
         nome: photoName,
-        original_url: `https://foto-ai-picbrand-ns.s3.sa-east-1.amazonaws.com/${photoName}.png`,
-        ia_url: `https://foto-ai-picbrand-ns.s3.sa-east-1.amazonaws.com/${photoName}IA.png`,
+        original_url: `https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/${photoName}.png`,
+        ia_url: `https://fotoai-picbrand.s3.sa-east-1.amazonaws.com/${photoName}IA.png`,
         quantidade: quantidade,
         impressa: true
       };
-      
-      return mockResponse;
     }
 
-    // URL completa do endpoint
     const updateUrl = getApiUrl(`/photos/${photoName}/quantidade`);
-    console.log('=== FAZENDO PATCH PARA QUANTIDADE ===');
-    console.log('URL completa:', updateUrl);
-    console.log('Método: PATCH');
-    console.log('Headers: Content-Type: application/json');
     
-    // Prepara o body
-    const requestBody = {
-      quantidade: quantidade
-    };
-    
-    console.log('=== BODY DA REQUISIÇÃO ===');
-    console.log('Body JSON:', JSON.stringify(requestBody));
-
     const response = await fetch(updateUrl, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(requestBody)
+      body: JSON.stringify({ quantidade })
     });
 
-    console.log('=== RESPOSTA DA API QUANTIDADE ===');
-    console.log('Status:', response.status);
-    console.log('Status Text:', response.statusText);
-    console.log('OK:', response.ok);
-
     if (!response.ok) {
-      throw new Error(`Erro ao atualizar quantidade: ${response.status} ${response.statusText}`);
+      throw new Error(`Erro ao atualizar quantidade: ${response.status}`);
     }
 
     const result = await response.json();
-    console.log('Resultado da API:', result);
     return result;
     
   } catch (error) {
-    console.error(' ERRO AO ATUALIZAR QUANTIDADE:', error);
-    console.error('Detalhes do erro:', error.message);
+    console.error('❌ ERRO AO ATUALIZAR QUANTIDADE:', error);
     throw error;
   }
 };
 
 /**
- * Reseta o progresso mock para desenvolvimento
+ * Marca a foto como impressa no banco de dados
  */
-export const resetMockProgress = () => {
-  localStorage.removeItem('mockProgress');
+export const markPhotoAsPrinted = async (photoName, quantidade = 1) => {
+  try {
+    console.log('=== MARK PHOTO AS PRINTED INICIADO ===');
+    console.log('Photo Name:', photoName);
+    console.log('Quantidade:', quantidade);
+
+    if (API_CONFIG.USE_MOCKS) {
+      console.log('Usando mocks para marcar foto como impressa');
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      return {
+        success: true,
+        message: 'Foto marcada como impressa',
+        photo_name: photoName,
+        quantidade: quantidade,
+        impressa: true
+      };
+    }
+
+    const printUrl = getApiUrl(`/photos/${photoName}/quantidade`);
+    console.log('=== FAZENDO PATCH PARA IMPRIMIR ===');
+    console.log('URL completa:', printUrl);
+
+    const response = await fetch(printUrl, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ quantidade })
+    });
+
+    console.log('=== RESPOSTA DA API IMPRIMIR ===');
+    console.log('Status:', response.status);
+    console.log('OK:', response.ok);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Erro da API:', errorText);
+      throw new Error(`Erro ao marcar foto como impressa: ${response.status} ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    console.log('✅ Foto marcada como impressa:', result);
+    return result;
+    
+  } catch (error) {
+    console.error('❌ ERRO AO MARCAR FOTO COMO IMPRESSA:', error);
+    throw error;
+  }
 };
 
 /**
- * Simula fotos geradas para desenvolvimento
- * @returns {Array} - Array com fotos simuladas
+ * Reseta o progresso mock
  */
-export const simulateGeneratedPhotos = () => {
-  const mockPhotos = [];
-  for (let i = 1; i <= 4; i++) {
-    mockPhotos.push({
-      id: `generated_${Date.now()}_${i}`,
-      url: `data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k=`,
-      style: 'professional',
-      generatedAt: new Date().toISOString()
-    });
-  }
-  return mockPhotos;
+export const resetMockProgress = () => {
+  localStorage.removeItem('mockProgress');
 };

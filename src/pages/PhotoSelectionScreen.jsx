@@ -5,9 +5,7 @@ import '../styles/PhotoSelectionScreen.css';
 
 const PhotoSelectionScreen = () => {
   const [generatedPhotos, setGeneratedPhotos] = useState([]);
-  const [selectedPhoto, setSelectedPhoto] = useState(null);
   const [selectionData, setSelectionData] = useState(null);
-  const [showPrintModal, setShowPrintModal] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const navigate = useNavigate();
 
@@ -33,18 +31,14 @@ const PhotoSelectionScreen = () => {
     setSelectionData(data);
   }, [navigate]);
 
-  const handlePhotoSelect = (photoId) => {
-    const photo = generatedPhotos.find((p) => p.id === photoId);
-    setSelectedPhoto(photo);
-    setShowPrintModal(true);
-  };
-
-  const handlePrintConfirm = async () => {
-    if (!selectedPhoto) {
-      alert('Nenhuma foto selecionada');
+  const handleContinue = async () => {
+    if (generatedPhotos.length === 0) {
+      alert('Nenhuma foto disponível');
       return;
     }
 
+    // Seleciona automaticamente a primeira (e única) foto
+    const selectedPhoto = generatedPhotos[0];
     setIsSaving(true);
 
     try {
@@ -99,13 +93,7 @@ const PhotoSelectionScreen = () => {
       alert('Erro ao salvar foto. Tente novamente.');
     } finally {
       setIsSaving(false);
-      setShowPrintModal(false);
     }
-  };
-
-  const handlePrintCancel = () => {
-    setShowPrintModal(false);
-    setSelectedPhoto(null);
   };
 
   const handleStartOver = () => {
@@ -120,7 +108,7 @@ const PhotoSelectionScreen = () => {
     localStorage.removeItem('selectedPhoto');
     localStorage.removeItem('aiTaskId');
     localStorage.removeItem('mockProgress');
-    localStorage.removeItem('savedIaUrl'); // também limpa a URL salva
+    localStorage.removeItem('savedIaUrl');
 
     navigate('/');
   };
@@ -137,78 +125,40 @@ const PhotoSelectionScreen = () => {
 
   return (
     <div className="photo-selection-screen">
-      <div className="photo-container">
+      <div className="photo-container single-photo-mode">
         <div className="header">
-          <h2>Suas fotos estão prontas!</h2>
-          <p>Clique na foto que você mais gostou para salvar:</p>
+          <h2>Sua foto está pronta!</h2>
+          <p>Confira o resultado abaixo:</p>
         </div>
 
-        <div className="photos-grid">
-          {generatedPhotos.map((photo) => (
-            <div
-              key={photo.id}
-              className="photo-item"
-              onClick={() => handlePhotoSelect(photo.id)}
-            >
-              <div className="photo-wrapper">
-                <div className="photo-frame">
-                  <img
-                    src={photo.url}
-                    alt={`Foto ${photo.id}`}
-                    className="photo-image"
-                  />
-                </div>
-                <div className="photo-overlay">
-                  <div className="selection-indicator">Selecionar</div>
-                </div>
-              </div>
-            </div>
-          ))}
+        <div className="single-photo-display">
+          <div className="photo-frame">
+            <img
+              src={generatedPhotos[0].url}
+              alt="Foto gerada"
+              className="photo-image"
+            />
+          </div>
         </div>
 
         <div className="action-buttons">
-          <button className="start-over-button" onClick={handleStartOver}>
+          <button 
+            className="continue-button" 
+            onClick={handleContinue}
+            disabled={isSaving}
+          >
+            {isSaving ? 'Salvando...' : 'Continuar'}
+          </button>
+          
+          <button 
+            className="start-over-button" 
+            onClick={handleStartOver}
+            disabled={isSaving}
+          >
             Começar Novamente
           </button>
         </div>
-
       </div>
-
-      {/* Modal de Confirmação */}
-      {showPrintModal && selectedPhoto && (
-        <div className="print-modal">
-          <div className="print-modal-content">
-            <div className="print-modal-header">
-              <h3>Confirmar seleção</h3>
-            </div>
-
-            <div className="print-modal-body">
-              <div className="print-preview">
-                <img src={selectedPhoto.url} alt="Foto selecionada" />
-              </div>
-              <p>Deseja continuar com esta foto?</p>
-              {isSaving && <p><strong>Salvando foto...</strong></p>}
-            </div>
-
-            <div className="print-modal-buttons">
-              <button 
-                className="print-cancel-button" 
-                onClick={handlePrintCancel}
-                disabled={isSaving}
-              >
-                Cancelar
-              </button>
-              <button 
-                className="print-confirm-button" 
-                onClick={handlePrintConfirm}
-                disabled={isSaving}
-              >
-                {isSaving ? 'Salvando...' : 'Continuar'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

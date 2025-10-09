@@ -4,144 +4,205 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: linear-gradient(90deg, #e42125 0%, #f29417 100%);
-  padding: 2vh;
+  background: linear-gradient(135deg, #e42125 0%, #f29417 100%);
+  padding: 3vh;
   font-family: 'Arial', sans-serif;
   color: #f4f1e1;
 }
 
 .gender-container {
   background: #f4f1e1;
-  border-radius: 30px;
-  padding: 6vh;
-  box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
+  border-radius: 40px;
+  padding: 5vh 6vh 6vh;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   text-align: center;
-  max-width: 60vh;
+  max-width: 65vh;
   width: 100%;
-  border: 3px solid #e42125;
+  border: 4px solid #e42125;
+  position: relative;
+}
+
+.gender-container::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(135deg, #e42125 0%, #f29417 100%);
+  border-radius: 42px;
+  z-index: -1;
 }
 
 .main-title {
   color: #e42125;
-  margin-bottom: 1.5vh;
+  margin-bottom: 1vh;
   margin-top: 0;
-  font-size: 5vh;
+  font-size: 5.5vh;
   font-weight: bold;
+  letter-spacing: -0.5px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .gender-container h2 {
-  color: #e42125;
-  margin-bottom: 4vh;
-  font-size: 3.5vh;
-  font-weight: bold;
+  color: #333333;
+  margin-bottom: 1.5vh;
+  margin-top: 3vh;
+  font-size: 3.2vh;
+  font-weight: 600;
+  line-height: 1.3;
 }
 
 .gender-container h3 {
-  color: #e42125;
-  margin-bottom: 3vh;
-  font-size: 3vh;
-  font-weight: bold;
+  color: #333333;
+  margin-bottom: 2vh;
+  margin-top: 3.5vh;
+  font-size: 3.2vh;
+  font-weight: 600;
+  line-height: 1.3;
 }
 
 .gender-options,
 .age-options {
   display: flex;
-  gap: 3vh;
+  gap: 2.5vh;
   justify-content: center;
-  margin-bottom: 4vh;
+  margin-bottom: 3.5vh;
+  margin-top: 1vh;
 }
 
 .gender-button,
 .age-button {
-  background: #f4f1e1;
+  background: #ffffff;
   border: 3px solid #e42125;
-  border-radius: 20px;
-  padding: 3vh 5vh;
-  font-size: 2.5vh;
-  font-weight: bold;
+  border-radius: 25px;
+  padding: 2.8vh 4.5vh;
+  font-size: 2.8vh;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   color: #e42125;
-  min-width: 20vh;
+  min-width: 22vh;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .gender-button:hover,
 .age-button:hover {
-  background: #f0f0f0;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  background: #fff5f5;
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(228, 33, 37, 0.3);
+  border-color: #f29417;
 }
 
 .gender-button.selected,
 .age-button.selected {
-  background: linear-gradient(90deg, #e42125 0%, #f29417 100%);
-  color: #f4f1e1;
+  background: linear-gradient(135deg, #e42125 0%, #f29417 100%);
+  color: #ffffff;
   border-color: #e42125;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 6px 20px rgba(228, 33, 37, 0.4);
+  transform: scale(1.05);
 }
 
 .continue-button {
-  background: linear-gradient(90deg, #e42125 0%, #f29417 100%);
-  color: #f4f1e1;
-  border: 3px solid #e42125;
-  border-radius: 30px;
-  padding: 2vh 5vh;
-  font-size: 2.5vh;
+  background: linear-gradient(135deg, #e42125 0%, #f29417 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 35px;
+  padding: 2.5vh 6vh;
+  font-size: 2.8vh;
   font-weight: bold;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  min-width: 25vh;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 6px 20px rgba(228, 33, 37, 0.4);
+  min-width: 30vh;
+  margin-top: 2vh;
+  letter-spacing: 0.5px;
 }
 
 .continue-button:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-  background: #333333;
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 10px 30px rgba(228, 33, 37, 0.5);
+  background: linear-gradient(135deg, #c91d21 0%, #d47f12 100%);
+}
+
+.continue-button:active:not(:disabled) {
+  transform: translateY(-1px) scale(1.01);
 }
 
 .continue-button:disabled {
-  background: #666666;
+  background: linear-gradient(135deg, #999999 0%, #bbbbbb 100%);
   cursor: not-allowed;
-  opacity: 0.6;
+  opacity: 0.5;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Separadores visuais */
+.gender-container h2::after,
+.gender-container h3::after {
+  content: '';
+  display: block;
+  width: 8vh;
+  height: 0.4vh;
+  background: linear-gradient(90deg, #e42125 0%, #f29417 100%);
+  margin: 1.5vh auto 0;
+  border-radius: 2px;
 }
 
 /* Otimizado para TV vertical */
 @media (orientation: portrait) {
+  .gender-selection-screen {
+    padding: 2vh;
+  }
+
   .gender-container {
-    padding: 4vh;
-    max-width: 70vh;
+    padding: 4vh 5vh 5vh;
+    max-width: 75vh;
+    border-radius: 35px;
+  }
+  
+  .gender-container::before {
+    border-radius: 37px;
   }
   
   .main-title {
-    font-size: 4vh;
+    font-size: 4.5vh;
+    margin-bottom: 0.5vh;
   }
   
-  .gender-container h2 {
-    font-size: 3vh;
-  }
-  
+  .gender-container h2,
   .gender-container h3 {
-    font-size: 2.5vh;
+    font-size: 2.8vh;
+    margin-top: 2.5vh;
+    margin-bottom: 1.5vh;
+  }
+
+  .gender-container h2::after,
+  .gender-container h3::after {
+    width: 6vh;
+    height: 0.3vh;
+    margin-top: 1vh;
   }
   
   .gender-options,
   .age-options {
     flex-direction: column;
     gap: 2vh;
+    margin-bottom: 2.5vh;
   }
   
   .gender-button,
   .age-button {
     min-width: auto;
     width: 100%;
-    font-size: 2vh;
-    padding: 2vh 3vh;
+    font-size: 2.5vh;
+    padding: 2.5vh 4vh;
+    border-radius: 22px;
   }
   
   .continue-button {
-    font-size: 2vh;
-    padding: 1.5vh 4vh;
+    font-size: 2.5vh;
+    padding: 2.2vh 5vh;
+    margin-top: 1.5vh;
+    border-radius: 30px;
   }
-
 }

@@ -1,20 +1,24 @@
+// src/pages/StyleSelectionScreen.jsx (ou .tsx se usar TS)
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AVAILABLE_STYLES, getPrompt } from '../data/prompts';
-import { generatePhotoWithAI, getStyleReferenceUrl, buildPhotoUrl, resetMockProgress } from '../services/photoService';
+import { AVAILABLE_STYLES, getPrompt, getStyleReference } from '../data/prompts';
+import { generatePhotoWithAI, buildPhotoUrl, resetMockProgress } from '../services/photoService';
 import '../styles/StyleSelectionScreen.css';
 
-// Mapa de IDs de estilo para as novas pastas em /assets
-const ASSET_FOLDER_MAP = {
-  CLAY_OFFICE: 'CLAY OFFICE',
-  CORRETOR_FUTURO: 'CORRETOR DO FUTURO',
-  HOLOGRAMAS_SEGUROS: 'HOLOGRAMA DE SEGUROS',
-  LIVRARIA_SEGUROS: 'LIVRARIA DE SEGUROS',
-  PALESTRANDO: 'PALESTRANDO',
-  PODERES: 'PODERES',
-  SALA_FUTURO: 'SALA DO FUTURO',
-  SALA_PIXAR: 'SALA PIXAR',
-  SEGUROS_ONLINE: 'SEGUROS ONLINE',
+// 🔁 Novo: mapeia ID -> pasta exata em /assets (com acentos/espaços)
+const STYLE_ASSET_FOLDER = {
+  AGENCIA: 'AGÊNCIA',
+  CLINICA_DE_ANIMAIS: 'CLÍNICA DE ANIMAIS',
+  CONSTRUCAO: 'CONSTRUCAO',
+  COZINHA: 'COZINHA',
+  ESPORTE: 'ESPORTE',
+  FABRICA: 'FÁBRICA',
+  HOSPITAL: 'HOSPITAL',
+  INFLUENCIADOR: 'INFLUENCIADOR',
+  LABORATORIO: 'LABORATÓRIO',
+  OFFICE: 'OFFICE',
+  SALA_DE_AULA: 'SALA DE AULA',
+  TECH: 'TECH',
 };
 
 const StyleSelectionScreen = () => {
@@ -23,75 +27,44 @@ const StyleSelectionScreen = () => {
   const [generationProgress, setGenerationProgress] = useState(0);
   const navigate = useNavigate();
 
-  // Recupera dados do localStorage
   const uploadedPhotoData = JSON.parse(localStorage.getItem('uploadedPhoto') || '{}');
   const selectedGender = localStorage.getItem('selectedGender');
 
   useEffect(() => {
-    console.log('=== STYLE SELECTION SCREEN ===');
-    console.log('uploadedPhotoData:', uploadedPhotoData);
-    console.log('selectedGender:', selectedGender);
-    console.log('uploadedPhotoData.photoId:', uploadedPhotoData.photoId);
-    
-    // Se não há dados necessários, volta para a câmera
     if (!uploadedPhotoData.photoId || !selectedGender) {
-      console.log('Dados insuficientes, redirecionando para câmera');
       navigate('/camera');
-    } else {
-      console.log('Dados OK, exibindo tela de seleção de estilos');
     }
-  }, [navigate]);
+  }, [navigate, uploadedPhotoData.photoId, selectedGender]);
 
-  const handleStyleSelect = (styleId) => {
-    setSelectedStyle(styleId);
-  };
+  const handleStyleSelect = (styleId) => setSelectedStyle(styleId);
 
   const handleConfirm = async () => {
-    if (!selectedStyle || !uploadedPhotoData.photoId || !selectedGender) {
-      return;
-    }
+    if (!selectedStyle || !uploadedPhotoData.photoId || !selectedGender) return;
 
     setIsGenerating(true);
     setGenerationProgress(0);
-    
-    // Reseta o progresso mock para nova geração
     resetMockProgress();
 
     try {
-      // Obtém o nome da foto salvo no localStorage
       const photoName = localStorage.getItem('uploadedPhotoName');
-      if (!photoName) {
-        throw new Error('Nome da foto não encontrado');
-      }
+      if (!photoName) throw new Error('Nome da foto não encontrado');
 
-      // Constrói a URL da foto original
-      const photoUrl = buildPhotoUrl(photoName);
-      
-      // Obtém a URL da referência de estilo
-      const styleRef = getStyleReferenceUrl(selectedStyle, selectedGender);
+      const s3PhotoUrl = buildPhotoUrl(photoName);
+      const prompt = getPrompt(selectedGender, selectedStyle);
+      const styleRefUrl = getStyleReference(selectedGender, selectedStyle);
 
-      // Obtém o prompt baseado no gênero e estilo
-      const prompt = getPrompt(
-        selectedGender,
-        selectedStyle,
-        photoUrl,
-        styleRef
-      );
-
-      // Salva os dados da seleção
       const selectionData = {
         gender: selectedGender,
         style: selectedStyle,
-        prompt: prompt,
+        prompt,
         originalPhoto: uploadedPhotoData,
-        photoUrl: photoUrl,
-        styleRef: styleRef
+        s3PhotoUrl,
+        styleRefUrl,
       };
       localStorage.setItem('selectionData', JSON.stringify(selectionData));
 
-      // Simula progresso da geração
       const progressInterval = setInterval(() => {
-        setGenerationProgress(prev => {
+        setGenerationProgress((prev) => {
           if (prev >= 90) {
             clearInterval(progressInterval);
             return 90;
@@ -100,20 +73,18 @@ const StyleSelectionScreen = () => {
         });
       }, 500);
 
-      // Envia prompt para o backend gerar as fotos
-      const aiResponse = await generatePhotoWithAI(prompt, photoUrl, styleRef);
-      
+      const aiResponse = await generatePhotoWithAI(
+        prompt,
+        s3PhotoUrl,
+        styleRefUrl,
+        '9:16'
+      );
+
       clearInterval(progressInterval);
       setGenerationProgress(100);
-
-      // Salva a resposta da IA (task_id)
       localStorage.setItem('aiTaskId', aiResponse.task_id);
 
-      // Navega para a tela de loading
-      setTimeout(() => {
-        navigate('/loading');
-      }, 1000);
-
+      setTimeout(() => navigate('/loading'), 1000);
     } catch (error) {
       console.error('Erro ao gerar fotos:', error);
       setIsGenerating(false);
@@ -126,13 +97,13 @@ const StyleSelectionScreen = () => {
     <div className="style-selection-screen">
       <div className="style-container">
         <h2>Escolha o estilo da sua foto:</h2>
-        
+
         <div className="styles-grid">
           {AVAILABLE_STYLES.map((style) => {
-            const genderCode = selectedGender === 'masculino' ? 'MASC' : 'FEM';
-            const professionFolder = ASSET_FOLDER_MAP[style.id] || style.id;
-            const imagePath = new URL(`../assets/${professionFolder}/${genderCode}.png`, import.meta.url).href;
-            
+            const folder = STYLE_ASSET_FOLDER[style.id] || style.id; // fallback: usa o próprio id
+            const fileName = selectedGender === 'masculino' ? 'MASC.png' : 'FEM.png';
+            const imagePath = new URL(`../assets/${folder}/${fileName}`, import.meta.url).href;
+
             return (
               <button
                 key={style.id}
@@ -141,12 +112,13 @@ const StyleSelectionScreen = () => {
                 disabled={isGenerating}
               >
                 <div className="style-image">
-                  <img 
-                    src={imagePath} 
-                    alt={`${style.name} - ${genderCode}`}
+                  <img
+                    src={imagePath}
+                    alt={`${style.name} - ${fileName.replace('.png', '')}`}
                     onError={(e) => {
-                      e.target.style.display = 'none';
-                      e.target.nextSibling.style.display = 'flex';
+                      e.currentTarget.style.display = 'none';
+                      const fb = e.currentTarget.nextSibling;
+                      if (fb) fb.style.display = 'flex';
                     }}
                   />
                   <div className="style-fallback" style={{ display: 'none' }}>
@@ -161,27 +133,16 @@ const StyleSelectionScreen = () => {
 
         {isGenerating ? (
           <div className="generation-progress">
-            <div className="loading-spinner">
-              <div className="spinner"></div>
-            </div>
             <div className="progress-info">
-              <h3>Gerando suas fotos...</h3>
-              <p>Isso pode levar alguns minutos</p>
+              <h3>Salvando estilo...</h3>
             </div>
             <div className="progress-bar">
-              <div 
-                className="progress-fill" 
-                style={{ width: `${generationProgress}%` }}
-              ></div>
+              <div className="progress-fill" style={{ width: `${generationProgress}%` }} />
             </div>
             <div className="progress-percentage">{generationProgress}%</div>
           </div>
         ) : (
-          <button 
-            className="confirm-button"
-            disabled={!selectedStyle}
-            onClick={handleConfirm}
-          >
+          <button className="confirm-button" disabled={!selectedStyle} onClick={handleConfirm}>
             Gerar Fotos
           </button>
         )}

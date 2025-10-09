@@ -13,57 +13,55 @@ const LoadingScreen = () => {
 
   useEffect(() => {
     const taskId = localStorage.getItem('aiTaskId');
-    console.log('=== LOADING SCREEN INICIADA ===');
+    console.log('=== LOADING SCREEN RUNWAY INICIADA ===');
     console.log('Task ID recuperado:', taskId);
-    
+
     if (!taskId) {
-      console.log('❌ Task ID não encontrado, redirecionando para style-selection');
+      console.log('❌ Task ID não encontrado, redirecionando');
       navigate('/style-selection');
       return;
     }
 
     const pollProgress = async () => {
       try {
-        console.log('=== VERIFICANDO PROGRESSO ===');
+        console.log('=== VERIFICANDO PROGRESSO RUNWAY ===');
         console.log('Task ID:', taskId);
-        console.log('URL da requisição:', `http://127.0.0.1:8000/progress/${taskId}`);
-        
+
         const response = await checkProgress(taskId);
-        
+
         console.log('=== RESPOSTA DO PROGRESSO ===');
-        console.log('Resposta completa:', response);
         console.log('Progress:', response.progress);
         console.log('Image URLs:', response.image_urls);
-        
+
         if (response.progress !== undefined) {
           setProgress(response.progress);
-          console.log('Progresso atualizado para:', response.progress + '%');
-          
+          console.log('Progresso atualizado:', response.progress + '%');
+
           // Reset timeout count se progresso mudou
           if (response.progress > 0) {
             setTimeoutCount(0);
-            setStartTime(Date.now()); // Reset tempo também
+            setStartTime(Date.now());
           } else {
             // Incrementa contador se progresso está zerado
             const newCount = timeoutCount + 1;
             setTimeoutCount(newCount);
             console.log('Progresso zerado, contador:', newCount);
-            
-            // Verifica timeout por tentativas (10 tentativas) ou tempo (15 segundos)
+
+            // Verifica timeout
             const currentTime = Date.now();
-            const elapsedTime = (currentTime - startTime) / 1000; // em segundos
-            
+            const elapsedTime = (currentTime - startTime) / 1000;
+
             console.log('Tempo decorrido:', elapsedTime.toFixed(1), 'segundos');
             console.log('Tentativas com progresso zero:', newCount);
-            
-            if (newCount >= 20 || elapsedTime >= 30) {
-              console.log('⚠️ TIMEOUT DETECTADO:');
-              console.log('- Tentativas:', newCount, '(limite: 20)');
-              console.log('- Tempo:', elapsedTime.toFixed(1), 's (limite: 30s)');
-              
-              // Mostra alerta de erro e volta para câmera
+
+            // Runway pode demorar mais, então aumentamos os limites
+            if (newCount >= 80 || elapsedTime >= 170) {
+              console.log('⚠️ TIMEOUT DETECTADO');
+              console.log('- Tentativas:', newCount, '(limite: 30)');
+              console.log('- Tempo:', elapsedTime.toFixed(1), 's (limite: 60s)');
+
               alert('Erro: O processamento está demorando muito. Voltando para tirar uma nova foto.');
-              
+
               // Limpa dados e volta para câmera
               localStorage.removeItem('aiTaskId');
               localStorage.removeItem('generatedImages');
@@ -71,20 +69,24 @@ const LoadingScreen = () => {
               localStorage.removeItem('uploadedPhotoName');
               localStorage.removeItem('selectedGender');
               localStorage.removeItem('selectionData');
-              
+
               navigate('/camera');
               return;
             }
           }
-          
+
           // Se chegou a 100% e tem URLs das imagens
           if (response.progress === 100 && response.image_urls) {
             console.log('✅ PROGRESSO COMPLETO!');
             console.log('URLs das imagens:', response.image_urls);
+            console.log('Número de imagens:', response.image_urls.length);
+
             setIsLoading(false);
-            // Salva as URLs das imagens geradas
+
+            // Salva as URLs (Runway geralmente retorna 1 imagem)
             localStorage.setItem('generatedImages', JSON.stringify(response.image_urls));
             console.log('URLs salvas no localStorage');
+
             // Navega para a tela de resultados
             setTimeout(() => {
               console.log('Navegando para photo-selection');
@@ -93,13 +95,13 @@ const LoadingScreen = () => {
             return;
           }
         }
-        
+
         // Se ainda não terminou, continua verificando
         if (response.progress < 100) {
-          console.log('Progresso < 100%, verificando novamente em 2 segundos...');
-          setTimeout(pollProgress, 2000); // Verifica a cada 2 segundos
+          console.log('Progresso < 100%, verificando novamente em 3.5 segundos...');
+          setTimeout(pollProgress, 3500);
         }
-        
+
       } catch (err) {
         console.error('❌ ERRO AO VERIFICAR PROGRESSO:', err);
         console.error('Detalhes do erro:', err.message);
@@ -109,7 +111,7 @@ const LoadingScreen = () => {
     };
 
     // Inicia o polling
-    console.log('Iniciando polling de progresso...');
+    console.log('Iniciando polling de progresso Runway...');
     pollProgress();
 
     // Cleanup
@@ -117,12 +119,11 @@ const LoadingScreen = () => {
       console.log('Cleanup do polling');
       setIsLoading(false);
     };
-  }, [navigate]);
+  }, [navigate, timeoutCount, startTime]);
 
   const getProgressColor = () => {
-    return '#f4f1e1'; // Cor branca consistente com outras páginas
+    return '#f4f1e1';
   };
-
 
   if (error) {
     return (
@@ -132,7 +133,7 @@ const LoadingScreen = () => {
             <div className="error-icon">⚠️</div>
             <h2>Ops! Algo deu errado</h2>
             <p>{error}</p>
-            <button 
+            <button
               className="retry-button"
               onClick={() => window.location.reload()}
             >
@@ -155,28 +156,24 @@ const LoadingScreen = () => {
               <div className="spinner-ring"></div>
             </div>
           </div>
-          
+
           <div className="loading-text">
-            <h2>Gerando suas fotos...</h2>
+            <h2>Estamos gerando sua foto!</h2>
           </div>
 
           <div className="progress-section">
             <div className="progress-bar-container">
-              <div 
+              <div
                 className="progress-bar-fill"
-                style={{ 
+                style={{
                   width: `${progress}%`,
                   backgroundColor: getProgressColor()
                 }}
               ></div>
             </div>
-            <div className="progress-info">
-              <span className="progress-percentage">{progress}%</span>
-            </div>
           </div>
         </div>
       </div>
-
     </div>
   );
 };

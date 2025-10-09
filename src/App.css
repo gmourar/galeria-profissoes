@@ -14,3 +14,13 @@ body {
   padding: 0;
   font-family: 'Arial', sans-serif;
 }
+
+html, body {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}

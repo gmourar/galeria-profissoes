@@ -1,6 +1,8 @@
+// Arquivo: PrintScreen.jsx
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { updatePhotoQuantity } from '../services/photoService';
+import { markPhotoAsPrinted } from '../services/photoService';
 import QRCode from 'qrcode';
 import '../styles/PrintScreen.css';
 
@@ -117,19 +119,20 @@ const PrintScreen = () => {
         photoName = 'foto1';
       }
 
-      console.log('Enviando quantidade para impressão:', {
-        photoName,
-        quantidade: selectedQuantity
-      });
+      console.log('Marcando foto como impressa:', photoName);
 
-      // Chama a API para definir a quantidade
-      const result = await updatePhotoQuantity(photoName, selectedQuantity);
+      // Chama a API para marcar como impressa
+      const result = await markPhotoAsPrinted(photoName);
       
       clearInterval(progressInterval);
       setPrintProgress(100);
 
       console.log('Resposta da API:', result);
 
+      // Aguarda 1 segundo e volta para o início
+      setTimeout(() => {
+        handleStartOver();
+      }, 1000);
 
     } catch (error) {
       console.error('Erro ao imprimir foto:', error);
@@ -206,8 +209,8 @@ const PrintScreen = () => {
         {isPrinting ? (
           <div className="printing-section">
             <div className="printing-info">
-              <h3>salvando suas fotos...</h3>
-              <p>Por favor, aguarde enquanto processamos o salvamento da imagem</p>
+              <h3>Imprimindo sua foto...</h3>
+              <p>Por favor, aguarde enquanto processamos a impressão</p>
             </div>
             <div className="progress-bar">
               <div 
@@ -230,12 +233,21 @@ const PrintScreen = () => {
               <p>Use a câmera do seu celular para escanear o código</p>
             </div>
             <div className="action-buttons">
+              {/* NOVO BOTÃO: Voltar para Splash Screen e resetar dados */}
+
               <button 
                 className="print-button"
-                onClick={handleBack}
+                onClick={handlePrint}
                 disabled={isPrinting}
               >
-                Confirmar
+                Imprimir Foto
+              </button>
+              <button 
+                className="back-button"
+                onClick={handleStartOver}
+                disabled={isPrinting}
+              >
+                Começar de Novo
               </button>
             </div>
           </div>
